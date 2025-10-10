@@ -15,7 +15,7 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('access_token');
     if (token) {
-      console.log('Adding auth token to request:', config.url);
+      // Auth token added to request (log removed for security)
       config.headers.Authorization = `Bearer ${token}`;
     } else {
       console.warn('No auth token found for request:', config.url);
@@ -131,7 +131,7 @@ export const resumeAPI = {
   getResumes: async () => {
     try {
       console.log('API getResumes called');
-      console.log('Current auth token:', localStorage.getItem('access_token'));
+      // Auth check performed (log removed for security)
       
       // Check token first
       if (!localStorage.getItem('access_token')) {
@@ -204,8 +204,8 @@ export const resumeAPI = {
                           error.message || 
                           'Failed to update section';
       
-      // Add detailed debug information
-      console.error(`API Error Details: Status=${error.response?.status}, URL=${error.config?.url}, Method=${error.config?.method}`);
+      // Log minimal error details without sensitive information
+      console.error(`API Error: Status=${error.response?.status}`);
       
       // Convert object errors to strings
       const enhancedError = new Error(typeof errorMessage === 'object' 

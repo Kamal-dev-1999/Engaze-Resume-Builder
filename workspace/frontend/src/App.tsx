@@ -38,10 +38,8 @@ const App: React.FC = () => {
   
   useEffect(() => {
     // Try to refresh token on app load
-    console.log('App mounted, refreshing token...');
+    // Try to refresh token on app mount (logs removed for security)
     dispatch(refreshToken())
-      .unwrap()
-      .then(() => console.log('Token refresh successful'))
       .catch(error => console.error('Token refresh failed:', error));
   }, [dispatch]);
   

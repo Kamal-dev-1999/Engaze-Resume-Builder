@@ -22,9 +22,7 @@ const DashboardPage: React.FC = () => {
     const accessToken = localStorage.getItem('access_token');
     const refreshToken = localStorage.getItem('refresh_token');
     
-    console.log('Auth check on dashboard mount:');
-    console.log('- Access token present:', !!accessToken);
-    console.log('- Refresh token present:', !!refreshToken);
+    // Authentication check (tokens logging removed for security)
     
     // If no tokens, redirect to login
     if (!accessToken && !refreshToken) {
@@ -206,43 +204,7 @@ const DashboardPage: React.FC = () => {
         onCreate={handleCreateResume}
       />
       
-      {/* Debug Panel - only visible in development */}
-      {process.env.NODE_ENV !== 'production' && (
-        <div className="fixed bottom-4 left-4 p-4 bg-gray-800 text-white text-xs rounded-lg opacity-75 hover:opacity-100 transition-opacity">
-          <h4 className="font-bold mb-2">Debug Info:</h4>
-          <p>Loading: {isLoading ? 'Yes' : 'No'}</p>
-          <p>Error: {error ? error : 'None'}</p>
-          <p>Resumes: {resumes ? resumes.length : 0}</p>
-          <p>Access Token: {localStorage.getItem('access_token') ? 'Present' : 'Missing'}</p>
-          <p>Refresh Token: {localStorage.getItem('refresh_token') ? 'Present' : 'Missing'}</p>
-          <div className="flex space-x-2 flex-wrap">
-            <button 
-              onClick={() => dispatch(fetchResumes())} 
-              className="mt-2 px-2 py-1 bg-blue-600 rounded text-xs"
-            >
-              Refresh Data
-            </button>
-            <button 
-              onClick={() => {
-                console.log('Debug tokens:');
-                console.log('Access:', localStorage.getItem('access_token'));
-                console.log('Refresh:', localStorage.getItem('refresh_token'));
-              }} 
-              className="mt-2 px-2 py-1 bg-green-600 rounded text-xs"
-            >
-              Log Tokens
-            </button>
-            <button 
-              onClick={() => {
-                navigate('/login');
-              }} 
-              className="mt-2 px-2 py-1 bg-red-600 rounded text-xs"
-            >
-              Go to Login
-            </button>
-          </div>
-        </div>
-      )}
+      {/* Debug panel removed for security and cleanliness */}
     </div>
   );
 };
