@@ -93,6 +93,30 @@ const EditorPage: React.FC = () => {
     }
   };
   
+  // Preview formatting changes without saving to server
+  const handleFormatPreview = (sectionId: number, formatting: any) => {
+    if (resumeDetail && resumeDetail.sections) {
+      const section = resumeDetail.sections.find(s => s.id === sectionId);
+      if (section) {
+        // Create a new section with formatting
+        const updatedSection = {
+          ...section,
+          content: {
+            ...section.content,
+            formatting: formatting
+          }
+        };
+        
+        // Update the section locally only (not on the server)
+        // This allows real-time preview without saving
+        dispatch({
+          type: 'resume/updateSectionLocally',
+          payload: updatedSection
+        });
+      }
+    }
+  };
+  
   const handleFormatSave = (sectionId: number, formatting: any) => {
     if (resumeDetail && resumeDetail.sections) {
       const section = resumeDetail.sections.find(s => s.id === sectionId);
@@ -212,6 +236,7 @@ const EditorPage: React.FC = () => {
                           <SectionFormattingPanel 
                             section={formattingSection}
                             onSave={handleFormatSave}
+                            onPreview={handleFormatPreview}
                             onCancel={() => setFormattingSection(null)}
                           />
                         ) : (

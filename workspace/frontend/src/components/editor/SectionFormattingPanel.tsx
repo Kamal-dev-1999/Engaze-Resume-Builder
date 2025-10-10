@@ -25,12 +25,14 @@ interface SectionFormattingPanelProps {
   section: Section;
   onSave: (sectionId: number, formatting: SectionFormatting) => void;
   onCancel: () => void;
+  onPreview?: (sectionId: number, formatting: SectionFormatting) => void;
 }
 
 const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
   section,
   onSave,
-  onCancel
+  onCancel,
+  onPreview
 }) => {
   const defaultFormatting: SectionFormatting = section.content?.formatting || {
     fontFamily: 'Arial',
@@ -48,26 +50,47 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
 
   const [formatting, setFormatting] = useState<SectionFormatting>(defaultFormatting);
 
+  // Store original formatting to restore if canceled
+  const [originalFormatting] = useState<SectionFormatting>(defaultFormatting);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
     
+    let newFormatting;
     // Convert numeric values
     if (type === 'number') {
-      setFormatting({
+      newFormatting = {
         ...formatting,
         [name]: parseInt(value, 10)
-      });
+      };
     } else {
-      setFormatting({
+      newFormatting = {
         ...formatting,
         [name]: value
-      });
+      };
     }
+    
+    setFormatting(newFormatting);
+    
+    // Apply formatting changes in real-time to UI only
+    if (onPreview) {
+      onPreview(section.id, newFormatting);
+    }
+  };
+  
+  // Handle cancel - restore original formatting
+  const handleCancel = () => {
+    if (onPreview) {
+      onPreview(section.id, originalFormatting);
+    }
+    onCancel();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Save changes when the form is submitted
     onSave(section.id, formatting);
+    // Then close the panel
   };
 
   return (
@@ -132,7 +155,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.fontSize || 0) + 1;
                     if (newValue <= 36) {
-                      setFormatting({ ...formatting, fontSize: newValue });
+                      const newFormatting = { ...formatting, fontSize: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -146,7 +173,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.fontSize || 0) - 1;
                     if (newValue >= 8) {
-                      setFormatting({ ...formatting, fontSize: newValue });
+                      const newFormatting = { ...formatting, fontSize: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -200,7 +231,13 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
               <button
                 type="button"
                 className={`flex items-center justify-center p-2 border ${formatting.textAlign === 'left' ? 'bg-blue-50 border-blue-500' : 'border-gray-300 hover:bg-gray-50'} rounded-md`}
-                onClick={() => setFormatting({ ...formatting, textAlign: 'left' })}
+                  onClick={() => {
+                    const newFormatting = { ...formatting, textAlign: 'left' };
+                    setFormatting(newFormatting);
+                    if (onPreview) {
+                      onPreview(section.id, newFormatting);
+                    }
+                  }}
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h10M4 18h16" />
@@ -209,7 +246,13 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
               <button
                 type="button"
                 className={`flex items-center justify-center p-2 border ${formatting.textAlign === 'center' ? 'bg-blue-50 border-blue-500' : 'border-gray-300 hover:bg-gray-50'} rounded-md`}
-                onClick={() => setFormatting({ ...formatting, textAlign: 'center' })}
+                  onClick={() => {
+                    const newFormatting = { ...formatting, textAlign: 'center' };
+                    setFormatting(newFormatting);
+                    if (onPreview) {
+                      onPreview(section.id, newFormatting);
+                    }
+                  }}
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M8 12h8M4 18h16" />
@@ -218,7 +261,13 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
               <button
                 type="button"
                 className={`flex items-center justify-center p-2 border ${formatting.textAlign === 'right' ? 'bg-blue-50 border-blue-500' : 'border-gray-300 hover:bg-gray-50'} rounded-md`}
-                onClick={() => setFormatting({ ...formatting, textAlign: 'right' })}
+                  onClick={() => {
+                    const newFormatting = { ...formatting, textAlign: 'right' };
+                    setFormatting(newFormatting);
+                    if (onPreview) {
+                      onPreview(section.id, newFormatting);
+                    }
+                  }}
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M10 12h10M4 18h16" />
@@ -227,7 +276,13 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
               <button
                 type="button"
                 className={`flex items-center justify-center p-2 border ${formatting.textAlign === 'justify' ? 'bg-blue-50 border-blue-500' : 'border-gray-300 hover:bg-gray-50'} rounded-md`}
-                onClick={() => setFormatting({ ...formatting, textAlign: 'justify' })}
+                  onClick={() => {
+                    const newFormatting = { ...formatting, textAlign: 'justify' };
+                    setFormatting(newFormatting);
+                    if (onPreview) {
+                      onPreview(section.id, newFormatting);
+                    }
+                  }}
               >
                 <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -314,7 +369,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.padding || 0) + 1;
                     if (newValue <= 48) {
-                      setFormatting({ ...formatting, padding: newValue });
+                      const newFormatting = { ...formatting, padding: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -328,7 +387,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.padding || 0) - 1;
                     if (newValue >= 0) {
-                      setFormatting({ ...formatting, padding: newValue });
+                      const newFormatting = { ...formatting, padding: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -362,7 +425,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.margin || 0) + 1;
                     if (newValue <= 48) {
-                      setFormatting({ ...formatting, margin: newValue });
+                      const newFormatting = { ...formatting, margin: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -376,7 +443,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.margin || 0) - 1;
                     if (newValue >= 0) {
-                      setFormatting({ ...formatting, margin: newValue });
+                      const newFormatting = { ...formatting, margin: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -410,7 +481,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.borderWidth || 0) + 1;
                     if (newValue <= 10) {
-                      setFormatting({ ...formatting, borderWidth: newValue });
+                      const newFormatting = { ...formatting, borderWidth: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -424,7 +499,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.borderWidth || 0) - 1;
                     if (newValue >= 0) {
-                      setFormatting({ ...formatting, borderWidth: newValue });
+                      const newFormatting = { ...formatting, borderWidth: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -485,7 +564,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.borderRadius || 0) + 1;
                     if (newValue <= 24) {
-                      setFormatting({ ...formatting, borderRadius: newValue });
+                      const newFormatting = { ...formatting, borderRadius: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -499,7 +582,11 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
                   onClick={() => {
                     const newValue = (formatting.borderRadius || 0) - 1;
                     if (newValue >= 0) {
-                      setFormatting({ ...formatting, borderRadius: newValue });
+                      const newFormatting = { ...formatting, borderRadius: newValue };
+                      setFormatting(newFormatting);
+                      if (onPreview) {
+                        onPreview(section.id, newFormatting);
+                      }
                     }
                   }}
                 >
@@ -512,37 +599,12 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
           </div>
         </div>
         
-        {/* Preview */}
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Preview
-          </label>
-          <div 
-            className="border rounded-md p-4"
-            style={{
-              fontFamily: formatting.fontFamily,
-              fontSize: `${formatting.fontSize}px`,
-              fontWeight: formatting.fontWeight,
-              textAlign: formatting.textAlign as any,
-              color: formatting.textColor,
-              backgroundColor: formatting.backgroundColor,
-              padding: `${formatting.padding}px`,
-              margin: `${formatting.margin}px`,
-              borderWidth: `${formatting.borderWidth}px`,
-              borderColor: formatting.borderColor,
-              borderStyle: formatting.borderWidth ? 'solid' : 'none',
-              borderRadius: `${formatting.borderRadius}px`,
-            }}
-          >
-            <p>This is a preview of how your section will look with these formatting options.</p>
-            <p>Sample text for the {section.type} section.</p>
-          </div>
-        </div>
+        {/* Real-time changes are applied directly to the resume */}
         
         <div className="flex justify-end space-x-2">
           <button
             type="button"
-            onClick={onCancel}
+            onClick={handleCancel}
             className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md text-sm"
           >
             Cancel
@@ -551,7 +613,7 @@ const SectionFormattingPanel: React.FC<SectionFormattingPanelProps> = ({
             type="submit"
             className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
           >
-            Save Formatting
+            Save
           </button>
         </div>
       </form>
