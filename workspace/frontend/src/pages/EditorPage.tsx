@@ -250,22 +250,43 @@ const EditorPage: React.FC = () => {
                               <div className="border-b pb-4 mb-4">
                                 <h1 className="text-2xl font-bold">{resumeDetail.title}</h1>
                                 {resumeDetail.sections?.find(s => s.type === 'contact')?.content && (
-                                  <div className="mt-2 text-sm text-gray-600">
-                                    {(() => {
-                                      const contactSection = resumeDetail.sections?.find(s => s.type === 'contact')?.content;
-                                      if (!contactSection) return null;
-                                      
-                                      // Build the contact string from actual content
-                                      const contactDetails = [];
-                                      if (contactSection.email) contactDetails.push(contactSection.email);
-                                      if (contactSection.phone) contactDetails.push(contactSection.phone);
-                                      if (contactSection.address) contactDetails.push(contactSection.address);
-                                      // Support legacy field name "location"
-                                      if (contactSection.location && !contactSection.address) contactDetails.push(contactSection.location);
-                                      
-                                      return <p>{contactDetails.join(' | ')}</p>;
-                                    })()}
-                                  </div>
+                                  (() => {
+                                    const section = resumeDetail.sections?.find(s => s.type === 'contact');
+                                    if (!section) return null;
+                                    
+                                    const contactSection = section.content;
+                                    const formatting = contactSection.formatting || {};
+                                    
+                                    // Build the contact string from actual content
+                                    const contactDetails = [];
+                                    if (contactSection.email) contactDetails.push(contactSection.email);
+                                    if (contactSection.phone) contactDetails.push(contactSection.phone);
+                                    if (contactSection.address) contactDetails.push(contactSection.address);
+                                    // Support legacy field name "location"
+                                    if (contactSection.location && !contactSection.address) contactDetails.push(contactSection.location);
+                                    
+                                    // Apply formatting styles
+                                    const styles = {
+                                      fontFamily: formatting.fontFamily || 'inherit',
+                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
+                                      fontWeight: formatting.fontWeight || 'inherit',
+                                      textAlign: formatting.textAlign as any || 'inherit',
+                                      color: formatting.textColor || 'inherit',
+                                      backgroundColor: formatting.backgroundColor || 'transparent',
+                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
+                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
+                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
+                                      borderColor: formatting.borderColor || 'transparent',
+                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
+                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
+                                    };
+                                    
+                                    return (
+                                      <div className="mt-2 text-sm" style={styles}>
+                                        <p>{contactDetails.join(' | ')}</p>
+                                      </div>
+                                    );
+                                  })()
                                 )}
                               </div>
                               
@@ -273,10 +294,35 @@ const EditorPage: React.FC = () => {
                               {resumeDetail.sections?.find(s => s.type === 'summary') && (
                                 <div className="mb-4">
                                   <h2 className="text-lg font-semibold mb-2">Professional Summary</h2>
-                                  <p className="text-sm">
-                                    {resumeDetail.sections?.find(s => s.type === 'summary')?.content?.text || 
-                                      'Your professional summary will appear here.'}
-                                  </p>
+                                  {(() => {
+                                    const section = resumeDetail.sections?.find(s => s.type === 'summary');
+                                    if (!section) return null;
+                                    
+                                    const summaryContent = section.content;
+                                    const formatting = summaryContent.formatting || {};
+                                    
+                                    // Apply formatting styles
+                                    const styles = {
+                                      fontFamily: formatting.fontFamily || 'inherit',
+                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
+                                      fontWeight: formatting.fontWeight || 'inherit',
+                                      textAlign: formatting.textAlign as any || 'inherit',
+                                      color: formatting.textColor || 'inherit',
+                                      backgroundColor: formatting.backgroundColor || 'transparent',
+                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
+                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
+                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
+                                      borderColor: formatting.borderColor || 'transparent',
+                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
+                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
+                                    };
+                                    
+                                    return (
+                                      <p className="text-sm" style={styles}>
+                                        {summaryContent.text || 'Your professional summary will appear here.'}
+                                      </p>
+                                    );
+                                  })()}
                                 </div>
                               )}
                               
@@ -284,14 +330,40 @@ const EditorPage: React.FC = () => {
                               {resumeDetail.sections?.some(s => s.type === 'experience') && (
                                 <div className="mb-4">
                                   <h2 className="text-lg font-semibold mb-2">Work Experience</h2>
-                                  <div className="text-sm">
-                                    <p className="font-medium">Job Title</p>
-                                    <p>Company Name | Location</p>
-                                    <p className="text-xs text-gray-600">Start Date - End Date</p>
-                                    <ul className="mt-1 list-disc list-inside">
-                                      <li>Responsibilities and achievements will be shown here.</li>
-                                    </ul>
-                                  </div>
+                                  {(() => {
+                                    const section = resumeDetail.sections?.find(s => s.type === 'experience');
+                                    if (!section) return null;
+                                    
+                                    const experienceContent = section.content;
+                                    const formatting = experienceContent.formatting || {};
+                                    
+                                    // Apply formatting styles
+                                    const styles = {
+                                      fontFamily: formatting.fontFamily || 'inherit',
+                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
+                                      fontWeight: formatting.fontWeight || 'inherit',
+                                      textAlign: formatting.textAlign as any || 'inherit',
+                                      color: formatting.textColor || 'inherit',
+                                      backgroundColor: formatting.backgroundColor || 'transparent',
+                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
+                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
+                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
+                                      borderColor: formatting.borderColor || 'transparent',
+                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
+                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
+                                    };
+                                    
+                                    return (
+                                      <div className="text-sm" style={styles}>
+                                        <p className="font-medium">Job Title</p>
+                                        <p>Company Name | Location</p>
+                                        <p className="text-xs text-gray-600">Start Date - End Date</p>
+                                        <ul className="mt-1 list-disc list-inside">
+                                          <li>Responsibilities and achievements will be shown here.</li>
+                                        </ul>
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               )}
                               
