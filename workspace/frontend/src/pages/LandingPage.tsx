@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 
 const LandingPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-blue-50">
+    <div className="min-h-screen w-full bg-gradient-to-b from-white to-blue-50">
       {/* Hero Section */}
-      <header className="relative overflow-hidden">
+      <header className="relative overflow-hidden w-full">
         {/* Navigation */}
-        <nav className="relative z-10 px-4 sm:px-6 lg:px-8">
-          <div className="max-w-7xl mx-auto">
+        <nav className="relative z-10 px-4 sm:px-6 lg:px-8 w-full">
+          <div className="w-full">
             <div className="flex items-center justify-between h-20">
               <div className="flex items-center">
                 <div className="flex items-center space-x-2">

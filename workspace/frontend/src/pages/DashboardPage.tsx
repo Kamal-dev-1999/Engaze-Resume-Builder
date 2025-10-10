@@ -43,11 +43,11 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-screen w-full bg-gradient-to-b from-gray-50 to-gray-100">
       <Navbar onLogout={handleLogout} />
       
-      <main className="py-6 sm:py-10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <main className="py-6 sm:py-10 w-full">
+        <div className="w-full max-w-full px-4 sm:px-6 lg:px-8">
           <div className="pb-6 border-b border-gray-200">
             <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 animate-fade-in-up">My Resumes</h1>
             <p className="mt-2 text-sm text-gray-600 animate-fade-in-up delay-100">
