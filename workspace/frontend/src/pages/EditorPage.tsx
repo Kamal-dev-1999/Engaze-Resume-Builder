@@ -108,11 +108,9 @@ const EditorPage: React.FC = () => {
         };
         
         // Update the section locally only (not on the server)
-        // This allows real-time preview without saving
-        dispatch({
-          type: 'resume/updateSectionLocally',
-          payload: updatedSection
-        });
+        // Using the same action creator as the save function
+        // but we won't dispatch any API calls later
+        dispatch(updateSectionLocally(updatedSection));
       }
     }
   };
