@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from './utils/hooks';
 import { refreshToken } from './redux/slices/authSlice';
+import ErrorBoundary from './components/ErrorBoundary';
 import './App.css';
 
 // Pages
@@ -37,7 +38,11 @@ const App: React.FC = () => {
   
   useEffect(() => {
     // Try to refresh token on app load
-    dispatch(refreshToken() as any);
+    console.log('App mounted, refreshing token...');
+    dispatch(refreshToken())
+      .unwrap()
+      .then(() => console.log('Token refresh successful'))
+      .catch(error => console.error('Token refresh failed:', error));
   }, [dispatch]);
   
   return (
@@ -52,12 +57,24 @@ const App: React.FC = () => {
         {/* Protected routes */}
         <Route path="/dashboard" element={
           <ProtectedRoute>
-            <DashboardPage />
+            <ErrorBoundary fallback={
+              <div className="p-6 bg-red-50 rounded-lg">
+                <h2 className="text-xl font-bold text-red-700">Dashboard Error</h2>
+                <p className="text-red-600 mb-3">We encountered an error loading the dashboard.</p>
+                <button onClick={() => window.location.reload()} className="px-4 py-2 bg-blue-600 text-white rounded">
+                  Reload Page
+                </button>
+              </div>
+            }>
+              <DashboardPage />
+            </ErrorBoundary>
           </ProtectedRoute>
         } />
         <Route path="/editor/:resumeId" element={
           <ProtectedRoute>
-            <EditorPage />
+            <ErrorBoundary>
+              <EditorPage />
+            </ErrorBoundary>
           </ProtectedRoute>
         } />
         

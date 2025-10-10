@@ -7,6 +7,7 @@ import { logout } from '../redux/slices/authSlice';
 import Navbar from '../components/Navbar';
 import ResumeCard from '../components/ResumeCard';
 import NewResumeModal from '../components/NewResumeModal';
+import { authAPI } from '../services/api';
 
 const DashboardPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,15 +16,84 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    dispatch(fetchResumes());
-  }, [dispatch]);
+    console.log('DashboardPage mounted, fetching resumes...');
+    
+    // Check if user is authenticated
+    const accessToken = localStorage.getItem('access_token');
+    const refreshToken = localStorage.getItem('refresh_token');
+    
+    console.log('Auth check on dashboard mount:');
+    console.log('- Access token present:', !!accessToken);
+    console.log('- Refresh token present:', !!refreshToken);
+    
+    // If no tokens, redirect to login
+    if (!accessToken && !refreshToken) {
+      console.warn('No authentication tokens found, redirecting to login');
+      navigate('/login');
+      return;
+    }
+    
+    // Verify authentication by checking if token is valid
+    const checkAuthentication = async () => {
+      try {
+        const isAuthenticated = await authAPI.checkAuth();
+        
+        if (!isAuthenticated) {
+          console.warn('Authentication check failed, redirecting to login');
+          navigate('/login');
+          return;
+        }
+        
+        // If authenticated, fetch resumes
+        try {
+          const result = await dispatch(fetchResumes()).unwrap();
+          console.log('Fetch resumes successful:', result);
+          if (!result || !Array.isArray(result) || result.length === 0) {
+            console.log('No resumes found in response');
+          }
+        } catch (error: any) {
+          console.error('Fetch resumes failed:', error);
+          // If authentication error, redirect to login
+          if (typeof error === 'string' && 
+              (error.includes('Authentication expired') || 
+               error.includes('Authentication token is missing'))) {
+            navigate('/login');
+          }
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        navigate('/login');
+      }
+    };
+    
+    checkAuthentication();
+  }, [dispatch, navigate]);
 
   const handleCreateResume = async (data: { title: string; template_name: string }) => {
-    const resultAction = await dispatch(createResume(data));
-    if (createResume.fulfilled.match(resultAction)) {
+    console.log('Creating resume with data:', data);
+    try {
+      // Close modal first to avoid state issues
       setIsModalOpen(false);
-      // Navigate to editor with the new resume ID
-      navigate(`/editor/${resultAction.payload.id}`);
+      
+      // Dispatch the action and await unwrapped result (this throws on rejection)
+      const newResume = await dispatch(createResume(data)).unwrap();
+      
+      console.log('Resume created successfully:', newResume);
+      
+      if (newResume && newResume.id) {
+        console.log('Navigating to editor with ID:', newResume.id);
+        // Navigate to editor with the new resume ID
+        navigate(`/editor/${newResume.id}`);
+      } else {
+        console.error('Missing resume ID in response');
+        alert('Resume was created but the ID is missing. Please try again or check the dashboard.');
+      }
+    } catch (error: any) {
+      console.error('Error in handleCreateResume:', error);
+      alert(`Failed to create resume: ${error.message || 'Unknown error'}`);
+      
+      // Reopen the modal if there was an error
+      setIsModalOpen(true);
     }
   };
 
@@ -135,6 +205,44 @@ const DashboardPage: React.FC = () => {
         onClose={() => setIsModalOpen(false)}
         onCreate={handleCreateResume}
       />
+      
+      {/* Debug Panel - only visible in development */}
+      {process.env.NODE_ENV !== 'production' && (
+        <div className="fixed bottom-4 left-4 p-4 bg-gray-800 text-white text-xs rounded-lg opacity-75 hover:opacity-100 transition-opacity">
+          <h4 className="font-bold mb-2">Debug Info:</h4>
+          <p>Loading: {isLoading ? 'Yes' : 'No'}</p>
+          <p>Error: {error ? error : 'None'}</p>
+          <p>Resumes: {resumes ? resumes.length : 0}</p>
+          <p>Access Token: {localStorage.getItem('access_token') ? 'Present' : 'Missing'}</p>
+          <p>Refresh Token: {localStorage.getItem('refresh_token') ? 'Present' : 'Missing'}</p>
+          <div className="flex space-x-2 flex-wrap">
+            <button 
+              onClick={() => dispatch(fetchResumes())} 
+              className="mt-2 px-2 py-1 bg-blue-600 rounded text-xs"
+            >
+              Refresh Data
+            </button>
+            <button 
+              onClick={() => {
+                console.log('Debug tokens:');
+                console.log('Access:', localStorage.getItem('access_token'));
+                console.log('Refresh:', localStorage.getItem('refresh_token'));
+              }} 
+              className="mt-2 px-2 py-1 bg-green-600 rounded text-xs"
+            >
+              Log Tokens
+            </button>
+            <button 
+              onClick={() => {
+                navigate('/login');
+              }} 
+              className="mt-2 px-2 py-1 bg-red-600 rounded text-xs"
+            >
+              Go to Login
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

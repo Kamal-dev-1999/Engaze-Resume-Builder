@@ -147,7 +147,9 @@ REST_FRAMEWORK = {
     ],
     'EXCEPTION_HANDLER': 'api.exceptions.custom_exception_handler',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 10
+    'PAGE_SIZE': 10,
+    # Enable detailed errors in development
+    'NON_FIELD_ERRORS_KEY': 'error',
 }
 
 # CORS settings
@@ -160,6 +162,9 @@ if os.environ.get('CORS_ALLOW_LOCALHOST', 'False') == 'True':
         "http://localhost:5173",  # Vite default port
         "http://127.0.0.1:5173",  # Vite default port
     ])
+
+# Allow credentials (cookies, authorization headers)
+CORS_ALLOW_CREDENTIALS = True
 
 # Simple JWT settings
 from datetime import timedelta

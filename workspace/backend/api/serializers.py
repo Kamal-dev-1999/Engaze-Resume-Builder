@@ -29,6 +29,27 @@ class SectionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
         fields = ('id', 'type', 'content', 'order')
+        
+    def validate(self, data):
+        """Validate the entire section data"""
+        # For create operations, only validate that the section type is valid if provided
+        if self.instance is None:  # This is a create operation
+            if 'type' not in data:
+                raise serializers.ValidationError({"type": "Section type is required"})
+                
+        # Make sure type is valid if provided
+        if 'type' in data and data['type'] not in dict(Section.SECTION_TYPES).keys():
+            valid_types = ', '.join(dict(Section.SECTION_TYPES).keys())
+            raise serializers.ValidationError({"type": f"Invalid section type. Valid options are: {valid_types}"})
+            
+        return data
+        
+    def validate_content(self, value):
+        """Validate content based on section type"""
+        # Ensure content is a dict
+        if not isinstance(value, dict):
+            raise serializers.ValidationError("Content must be a JSON object")
+        return value
 
 class ResumeSerializer(serializers.ModelSerializer):
     """Serializer for the Resume model"""

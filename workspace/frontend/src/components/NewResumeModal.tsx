@@ -23,14 +23,17 @@ const NewResumeModal: React.FC<NewResumeModalProps> = ({ isOpen, onClose, onCrea
     if (!title.trim()) return;
 
     setIsSubmitting(true);
-    onCreate({ 
-      title: title.trim(), 
-      template_name: selectedTemplate 
-    });
-    // Reset form state
-    setTitle('');
-    setSelectedTemplate(TEMPLATES[0].id);
-    setIsSubmitting(false);
+    try {
+      onCreate({ 
+        title: title.trim(), 
+        template_name: selectedTemplate 
+      });
+      // Note: Don't reset state immediately as the parent component will close the modal
+      // The parent component handles setting isOpen to false after API call succeeds
+    } catch (error) {
+      console.error('Error creating resume:', error);
+      setIsSubmitting(false);
+    }
   };
 
   if (!isOpen) return null;

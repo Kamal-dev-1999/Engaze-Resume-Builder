@@ -58,12 +58,151 @@ class SectionViewSet(viewsets.ModelViewSet):
         if resume_id:
             return Section.objects.filter(resume_id=resume_id, resume__user=self.request.user)
         return Section.objects.filter(resume__user=self.request.user)
+        
+    def get_object(self):
+        """Get section object with better error handling"""
+        # Log the lookup attempt
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Looking up section with pk={self.kwargs.get('pk')}")
+        
+        # Try to get the object
+        return super().get_object()
     
-    def perform_create(self, serializer):
-        """Create a new section"""
+    def create(self, request, *args, **kwargs):
+        """Create a new section with detailed error reporting and auto-fill defaults"""
         resume_id = self.kwargs.get('resume_pk')
         resume = get_object_or_404(Resume, pk=resume_id, user=self.request.user)
-        serializer.save(resume=resume)
+        
+        # Copy request data to add missing fields
+        data = request.data.copy()
+        
+        # Get the highest order value for existing sections to place new section at the end
+        highest_order = Section.objects.filter(resume=resume).order_by('-order').values_list('order', flat=True).first()
+        order = 1 if highest_order is None else highest_order + 1
+        
+        # If order is not provided in the request data, add it
+        if 'order' not in data:
+            data['order'] = order
+            
+        # Log the incoming data for debugging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Creating section with data: {data}")
+        
+        # If content is not provided, create default content based on section type
+        if 'content' not in data:
+            section_type = data.get('type')
+            default_content = {}
+            
+            if section_type == 'contact':
+                default_content = {
+                    'email': 'email@example.com',
+                    'phone': '123-456-7890',
+                    'address': 'City, State',
+                    'name': 'Your Name',
+                    'title': 'Your Job Title'
+                }
+            elif section_type == 'summary':
+                default_content = {
+                    'text': 'Your professional summary goes here.'
+                }
+            elif section_type == 'experience':
+                default_content = {
+                    'items': [
+                        {
+                            'title': 'Job Title',
+                            'company': 'Company Name',
+                            'location': 'City, State',
+                            'start_date': '',
+                            'end_date': '',
+                            'description': 'Job description and achievements'
+                        }
+                    ]
+                }
+            elif section_type == 'education':
+                default_content = {
+                    'items': [
+                        {
+                            'degree': 'Degree Name',
+                            'institution': 'Institution Name',
+                            'location': 'City, State',
+                            'start_date': '',
+                            'end_date': ''
+                        }
+                    ]
+                }
+            elif section_type == 'skills':
+                default_content = {
+                    'items': ['Skill 1', 'Skill 2', 'Skill 3']
+                }
+            elif section_type == 'projects':
+                default_content = {
+                    'items': [
+                        {
+                            'title': 'Project Name',
+                            'description': 'Project description',
+                            'technologies': ['Tech 1', 'Tech 2']
+                        }
+                    ]
+                }
+            elif section_type == 'custom':
+                default_content = {
+                    'title': 'Custom Section',
+                    'items': ['Item 1', 'Item 2', 'Item 3']
+                }
+                
+            # Add default content to data
+            data['content'] = default_content
+            logger.info(f"Added default content for {section_type}: {default_content}")
+            
+        # Create the serializer with our modified data
+        serializer = self.get_serializer(data=data)
+        
+        if not serializer.is_valid():
+            # Return detailed validation errors
+            logger.error(f"Section validation errors: {serializer.errors}")
+            return Response(
+                {"detail": "Invalid data", "errors": serializer.errors}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Save with the resume instance
+        section = serializer.save(resume=resume)
+        logger.info(f"Created section: {section.id} for resume: {resume.id}")
+        
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+            
+    def update(self, request, *args, **kwargs):
+        """Update a section with detailed error reporting"""
+        partial = kwargs.pop('partial', False)
+        
+        try:
+            instance = self.get_object()
+        except:
+            # Log the error for debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Section not found: {kwargs.get('pk')}")
+            return Response({"detail": "Section not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Ensure the user owns the resume this section belongs to
+        if instance.resume.user != request.user:
+            return Response({"detail": "You do not have permission to update this section"}, 
+                          status=status.HTTP_403_FORBIDDEN)
+            
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        
+        if not serializer.is_valid():
+            # Return detailed validation errors
+            return Response(
+                {"detail": "Invalid data", "errors": serializer.errors}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        self.perform_update(serializer)
+        
+        return Response(serializer.data)
 
 class StyleViewSet(viewsets.ModelViewSet):
     """ViewSet for Style model"""
