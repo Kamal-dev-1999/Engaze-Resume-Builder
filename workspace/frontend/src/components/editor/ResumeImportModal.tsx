@@ -84,12 +84,40 @@ const ResumeImportModal: React.FC<ResumeImportModalProps> = ({ isOpen, onClose, 
 
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-75 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl max-w-2xl w-full animate-fadeIn max-h-[90vh] overflow-y-auto">
+      {/* Loading Overlay */}
+      {isLoading && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm z-[60] flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="relative w-16 h-16">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full animate-spin"></div>
+                <div className="absolute inset-1 bg-white rounded-full"></div>
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-600 animate-pulse" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900">Parsing Resume with AI</h3>
+              <p className="text-gray-600 text-center text-sm">
+                Our AI is analyzing your resume and extracting key information...
+              </p>
+              <div className="w-full bg-gray-200 rounded-full h-1 overflow-hidden">
+                <div className="bg-gradient-to-r from-blue-500 to-blue-600 h-full w-full animate-pulse"></div>
+              </div>
+              <p className="text-xs text-gray-500 font-medium">This usually takes a few seconds</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className={`bg-white rounded-xl shadow-2xl max-w-2xl w-full animate-fadeIn max-h-[90vh] overflow-y-auto ${isLoading ? 'opacity-50 pointer-events-none' : ''}`}>
         <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200 sticky top-0 bg-white">
           <h3 className="text-xl font-bold text-gray-900">Import Resume</h3>
           <button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
+            disabled={isLoading}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
