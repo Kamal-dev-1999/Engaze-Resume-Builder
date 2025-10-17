@@ -31,13 +31,17 @@ interface EditorState {
   isLoading: boolean;
   error: string | Record<string, string> | null;
   isDirty: boolean; // tracks if there are unsaved changes
+  history: ResumeDetail[]; // history for undo
+  historyIndex: number; // current position in history
 }
 
 const initialState: EditorState = {
   resumeDetail: null,
   isLoading: false,
   error: null,
-  isDirty: false
+  isDirty: false,
+  history: [],
+  historyIndex: -1
 };
 
 // Async thunks
@@ -145,6 +149,10 @@ const editorSlice = createSlice({
             ...action.payload
           };
           state.isDirty = true;
+          // Save to history after update
+          state.history = state.history.slice(0, state.historyIndex + 1);
+          state.history.push(JSON.parse(JSON.stringify(state.resumeDetail)));
+          state.historyIndex = state.history.length - 1;
         }
       }
     },
@@ -166,6 +174,10 @@ const editorSlice = createSlice({
         
         state.resumeDetail.sections = newSections;
         state.isDirty = true;
+        // Save to history after reorder
+        state.history = state.history.slice(0, state.historyIndex + 1);
+        state.history.push(JSON.parse(JSON.stringify(state.resumeDetail)));
+        state.historyIndex = state.history.length - 1;
       }
     },
     addSectionLocally: (state, action) => {
@@ -179,6 +191,30 @@ const editorSlice = createSlice({
         state.resumeDetail.sections = state.resumeDetail.sections.filter(
           section => section.id !== action.payload
         );
+        state.isDirty = true;
+      }
+    },
+    // Helper function to save state to history
+    saveToHistory: (state) => {
+      if (state.resumeDetail) {
+        // Remove any future history if we're not at the end
+        state.history = state.history.slice(0, state.historyIndex + 1);
+        // Add current state to history
+        state.history.push(JSON.parse(JSON.stringify(state.resumeDetail)));
+        state.historyIndex = state.history.length - 1;
+      }
+    },
+    undo: (state) => {
+      if (state.historyIndex > 0) {
+        state.historyIndex -= 1;
+        state.resumeDetail = JSON.parse(JSON.stringify(state.history[state.historyIndex]));
+        state.isDirty = true;
+      }
+    },
+    redo: (state) => {
+      if (state.historyIndex < state.history.length - 1) {
+        state.historyIndex += 1;
+        state.resumeDetail = JSON.parse(JSON.stringify(state.history[state.historyIndex]));
         state.isDirty = true;
       }
     },
@@ -196,6 +232,9 @@ const editorSlice = createSlice({
       state.isLoading = false;
       state.resumeDetail = action.payload;
       state.isDirty = false;
+      // Initialize history with the loaded resume
+      state.history = [JSON.parse(JSON.stringify(action.payload))];
+      state.historyIndex = 0;
     });
     builder.addCase(fetchResumeDetail.rejected, (state, action) => {
       state.isLoading = false;
@@ -280,6 +319,9 @@ export const {
   reorderSectionsLocally,
   addSectionLocally,
   removeSectionLocally,
+  saveToHistory,
+  undo,
+  redo,
   resetDirtyState
 } = editorSlice.actions;
 
