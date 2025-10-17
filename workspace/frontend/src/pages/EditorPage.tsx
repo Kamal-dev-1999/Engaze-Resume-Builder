@@ -26,6 +26,7 @@ import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
 import MinimalistTemplate from '../components/templates/MinimalistTemplate';
 import DownloadResumeButton from '../components/DownloadResumeButton';
+import ShareResumeButton from '../components/ShareResumeButton';
 import type { ParsedResume } from '../utils/resumeParser';
 
 interface Section {
@@ -459,10 +460,16 @@ const EditorPage: React.FC = () => {
             </div>
             
             {resumeDetail && (
-              <DownloadResumeButton 
-                resumeTitle={resumeDetail.title}
-                resumeContent={resumePreviewRef}
-              />
+              <div className="flex gap-3">
+                <ShareResumeButton 
+                  resumeId={resumeDetail.id}
+                  initialShareSlug={resumeDetail.share_slug}
+                />
+                <DownloadResumeButton 
+                  resumeTitle={resumeDetail.title}
+                  resumeContent={resumePreviewRef}
+                />
+              </div>
             )}
           </div>
           

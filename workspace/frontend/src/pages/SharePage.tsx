@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../services/api';
+import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
+import ModernTemplate from '../components/templates/ModernTemplate';
+import CreativeTemplate from '../components/templates/CreativeTemplate';
+import MinimalistTemplate from '../components/templates/MinimalistTemplate';
 
 interface SharedResumeData {
+  id: number;
   title: string;
   template_name: string;
-  created_at: string;
   sections: Array<{
     id: number;
-    section_type: string;
+    type: string;
     content: Record<string, any>;
     order: number;
   }>;
-  style: {
-    style_data: Record<string, any>;
+  style?: {
+    id: number;
+    primary_color?: string;
+    font_family?: string;
+    font_size?: number;
   };
 }
 
@@ -27,7 +34,9 @@ const SharePage: React.FC = () => {
     const fetchSharedResume = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`resumes/share/${shareSlug}/`);
+        console.log('Fetching shared resume with slug:', shareSlug);
+        const response = await api.get(`public/resume/${shareSlug}/`);
+        console.log('Shared resume response:', response.data);
         setResumeData(response.data);
         setError(null);
       } catch (err) {
@@ -100,13 +109,19 @@ const SharePage: React.FC = () => {
             <p className="text-gray-600 mt-1">Template: {resumeData.template_name}</p>
           </div>
           
-          <div className="bg-white aspect-[1/1.4] border border-gray-300 rounded-md flex items-center justify-center">
-            <div className="text-center text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <p className="mt-2">Resume content will be rendered here</p>
-            </div>
+          <div className="bg-white border border-gray-300 rounded-md">
+            {resumeData.template_name === 'modern' && (
+              <ModernTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
+            )}
+            {resumeData.template_name === 'creative' && (
+              <CreativeTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
+            )}
+            {resumeData.template_name === 'minimalist' && (
+              <MinimalistTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
+            )}
+            {(!resumeData.template_name || resumeData.template_name === 'professional') && (
+              <ProfessionalTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
+            )}
           </div>
           
           <div className="mt-6 pt-4 border-t border-gray-200">
