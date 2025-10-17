@@ -13,174 +13,156 @@ interface MinimalistTemplateProps {
 }
 
 const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, sections }) => {
-  const contactSection = sections.find(s => s.type === 'contact')?.content || {};
-  const summarySection = sections.find(s => s.type === 'summary')?.content || {};
-  const educationSections = sections.filter(s => s.type === 'education');
-  const skillsSection = sections.find(s => s.type === 'skills')?.content || {};
-  const experienceSections = sections.filter(s => s.type === 'experience');
-  const projectSections = sections.filter(s => s.type === 'projects');
+  // Sort sections by order property to respect custom section ordering
+  const sortedSections = [...sections].sort((a, b) => a.order - b.order);
 
   return (
     <div className="w-full h-full bg-white p-8 font-sans">
       <div className="max-w-full">
-        {/* Minimal Header */}
-        <div className="mb-6">
-          {contactSection.name && (
-            <h1 className="text-2xl font-light tracking-widest text-gray-900">{contactSection.name}</h1>
-          )}
-          {contactSection.title && (
-            <p className="text-sm text-gray-600 tracking-wide mt-1">{contactSection.title}</p>
-          )}
-          
-          {/* Contact Details - Single Line */}
-          <div className="flex flex-wrap gap-3 text-xs text-gray-600 mt-3">
-            {contactSection.phone && <span>{contactSection.phone}</span>}
-            {contactSection.email && (
-              <>
-                {contactSection.phone && <span>·</span>}
-                <a href={`mailto:${contactSection.email}`} className="hover:text-gray-900">
-                  {contactSection.email}
-                </a>
-              </>
-            )}
-            {(contactSection.address || contactSection.location) && (
-              <>
-                <span>·</span>
-                <span>{contactSection.address || contactSection.location}</span>
-              </>
-            )}
-            {contactSection.linkedin && (
-              <>
-                <span>·</span>
-                <a href={contactSection.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
-                  LinkedIn
-                </a>
-              </>
-            )}
-            {contactSection.website && (
-              <>
-                <span>·</span>
-                <a href={contactSection.website} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
-                  Portfolio
-                </a>
-              </>
-            )}
-          </div>
-        </div>
-
-        {/* Minimal Separator */}
-        <div className="h-px bg-gray-200 mb-6"></div>
-
-        {/* Summary */}
-        {summarySection.text && (
-          <div className="mb-6">
-            <p className="text-xs leading-relaxed text-gray-700">{summarySection.text}</p>
-          </div>
-        )}
-
-        {/* Experience */}
-        {experienceSections.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
-              Experience
-            </h2>
-            <div className="space-y-4">
-              {experienceSections.map((section) => {
-                const exp = section.content;
-                return (
-                  <div key={section.id}>
-                    <div className="flex justify-between items-start mb-1">
-                      <p className="font-semibold text-sm text-gray-900">{exp.title}</p>
-                      {exp.startDate && exp.endDate && (
-                        <span className="text-xs text-gray-600">{exp.startDate} – {exp.endDate}</span>
-                      )}
-                    </div>
-                    <p className="text-xs text-gray-600 mb-1">{exp.company}</p>
-                    {exp.description && (
-                      <ul className="text-xs text-gray-700 space-y-1 mt-2">
-                        {exp.description.split('\n').map((line: string, idx: number) => (
-                          line.trim() && (
-                            <li key={idx} className="flex items-start">
-                              <span className="mr-2">—</span>
-                              <span>{line.trim()}</span>
-                            </li>
-                          )
-                        ))}
-                      </ul>
+        {sortedSections.map((section) => {
+          switch(section.type) {
+            case 'contact':
+              return (
+                <div key={section.id} className="mb-6">
+                  {section.content.name && (
+                    <h1 className="text-2xl font-light tracking-widest text-gray-900">{section.content.name}</h1>
+                  )}
+                  {section.content.title && (
+                    <p className="text-sm text-gray-600 tracking-wide mt-1">{section.content.title}</p>
+                  )}
+                  
+                  <div className="flex flex-wrap gap-3 text-xs text-gray-600 mt-3">
+                    {section.content.phone && <span>{section.content.phone}</span>}
+                    {section.content.email && (
+                      <>
+                        {section.content.phone && <span>·</span>}
+                        <a href={`mailto:${section.content.email}`} className="hover:text-gray-900">
+                          {section.content.email}
+                        </a>
+                      </>
+                    )}
+                    {(section.content.address || section.content.location) && (
+                      <>
+                        <span>·</span>
+                        <span>{section.content.address || section.content.location}</span>
+                      </>
+                    )}
+                    {section.content.linkedin && (
+                      <>
+                        <span>·</span>
+                        <a href={section.content.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
+                          LinkedIn
+                        </a>
+                      </>
+                    )}
+                    {section.content.website && (
+                      <>
+                        <span>·</span>
+                        <a href={section.content.website} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
+                          Portfolio
+                        </a>
+                      </>
                     )}
                   </div>
-                );
-              })}
-            </div>
-            <div className="h-px bg-gray-200 my-6"></div>
-          </div>
-        )}
-
-        {/* Education */}
-        {educationSections.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
-              Education
-            </h2>
-            <div className="space-y-3">
-              {educationSections.map((section) => {
-                const edu = section.content;
-                return (
-                  <div key={section.id}>
-                    <div className="flex justify-between items-start mb-1">
-                      <p className="font-semibold text-sm text-gray-900">{edu.degree}</p>
-                      {edu.startDate && edu.endDate && (
-                        <span className="text-xs text-gray-600">{edu.startDate} – {edu.endDate}</span>
+                  <div className="h-px bg-gray-200 mt-6 mb-6"></div>
+                </div>
+              );
+            case 'summary':
+              return (
+                <div key={section.id} className="mb-6">
+                  <p className="text-xs leading-relaxed text-gray-700">{section.content.text}</p>
+                  <div className="h-px bg-gray-200 mt-6 mb-6"></div>
+                </div>
+              );
+            case 'experience':
+              return (
+                <div key={section.id} className="mb-6">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
+                    Experience
+                  </h2>
+                  <div className="space-y-4">
+                    <div>
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="font-semibold text-sm text-gray-900">{section.content.title}</p>
+                        {section.content.startDate && section.content.endDate && (
+                          <span className="text-xs text-gray-600">{section.content.startDate} – {section.content.endDate}</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-600 mb-1">{section.content.company}</p>
+                      {section.content.description && (
+                        <ul className="text-xs text-gray-700 space-y-1 mt-2">
+                          {section.content.description.split('\n').map((line: string, idx: number) => (
+                            line.trim() && (
+                              <li key={idx} className="flex items-start">
+                                <span className="mr-2">—</span>
+                                <span>{line.trim()}</span>
+                              </li>
+                            )
+                          ))}
+                        </ul>
                       )}
                     </div>
-                    <p className="text-xs text-gray-600">{edu.institution}</p>
                   </div>
-                );
-              })}
-            </div>
-            <div className="h-px bg-gray-200 my-6"></div>
-          </div>
-        )}
-
-        {/* Skills */}
-        {skillsSection.items && skillsSection.items.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
-              Skills
-            </h2>
-            <p className="text-xs text-gray-700 leading-relaxed">
-              {skillsSection.items.join(' · ')}
-            </p>
-            <div className="h-px bg-gray-200 my-6"></div>
-          </div>
-        )}
-
-        {/* Projects */}
-        {projectSections.length > 0 && (
-          <div>
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
-              Projects
-            </h2>
-            <div className="space-y-3">
-              {projectSections.map((section) => {
-                const proj = section.content;
-                return (
-                  <div key={section.id}>
-                    <p className="font-semibold text-sm text-gray-900">
-                      {proj.title}
-                      {proj.link && (
-                        <> • <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 text-xs underline">{proj.linkText || 'Link'}</a></>
+                  <div className="h-px bg-gray-200 my-6"></div>
+                </div>
+              );
+            case 'education':
+              return (
+                <div key={section.id} className="mb-6">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
+                    Education
+                  </h2>
+                  <div className="space-y-3">
+                    <div>
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="font-semibold text-sm text-gray-900">{section.content.degree}</p>
+                        {section.content.startDate && section.content.endDate && (
+                          <span className="text-xs text-gray-600">{section.content.startDate} – {section.content.endDate}</span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-600">{section.content.institution}</p>
+                    </div>
+                  </div>
+                  <div className="h-px bg-gray-200 my-6"></div>
+                </div>
+              );
+            case 'skills':
+              return (
+                <div key={section.id} className="mb-6">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
+                    Skills
+                  </h2>
+                  <p className="text-xs text-gray-700 leading-relaxed">
+                    {section.content.skills}
+                  </p>
+                  <div className="h-px bg-gray-200 my-6"></div>
+                </div>
+              );
+            case 'projects':
+              return (
+                <div key={section.id} className="mb-6">
+                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
+                    Projects
+                  </h2>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="font-semibold text-sm text-gray-900">
+                        {section.content.title}
+                        {section.content.link && (
+                          <> • <a href={section.content.link} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 text-xs underline">{section.content.linkText || 'Link'}</a></>
+                        )}
+                      </p>
+                      {section.content.description && (
+                        <p className="text-xs text-gray-700 mt-1">{section.content.description}</p>
                       )}
-                    </p>
-                    {proj.description && (
-                      <p className="text-xs text-gray-700 mt-1">{proj.description}</p>
-                    )}
+                    </div>
                   </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
+                </div>
+              );
+            default:
+              return null;
+          }
+        })}
       </div>
     </div>
   );

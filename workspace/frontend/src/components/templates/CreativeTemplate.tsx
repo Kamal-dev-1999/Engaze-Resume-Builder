@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Mail, Phone, MapPin, Globe, Linkedin, Upload, X } from 'lucide-react';
 
 interface Section {
   id: number;
@@ -13,162 +14,163 @@ interface CreativeTemplateProps {
 }
 
 const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sections }) => {
-  const contactSection = sections.find(s => s.type === 'contact')?.content || {};
-  const summarySection = sections.find(s => s.type === 'summary')?.content || {};
-  const educationSections = sections.filter(s => s.type === 'education');
-  const skillsSection = sections.find(s => s.type === 'skills')?.content || {};
-  const experienceSections = sections.filter(s => s.type === 'experience');
-  const projectSections = sections.filter(s => s.type === 'projects');
+  // keep flexible ordering
+  const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+  
+  const [tempPhoto, setTempPhoto] = useState<string | null>(null);
+
+  const contact = sortedSections.find(s => s.type === 'contact')?.content || {};
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setTempPhoto(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearPhoto = () => setTempPhoto(null);
+
+  // allocate sections to left/right columns but preserve relative order within each column
+  const leftTypes = ['experience', 'projects', 'education'];
+  const rightTypes = ['skills', 'summary'];
+
+  const leftSections = sortedSections.filter(s => leftTypes.includes(s.type));
+  const rightSections = sortedSections.filter(s => rightTypes.includes(s.type));
 
   return (
-    <div className="w-full h-full bg-white p-8 font-sans">
-      <div className="max-w-full">
-        {/* Colorful Header */}
-        <div className="mb-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 text-white p-6 rounded-lg">
-          {contactSection.name && (
-            <h1 className="text-4xl font-bold mb-1">{contactSection.name}</h1>
-          )}
-          {contactSection.title && (
-            <p className="text-lg opacity-90">{contactSection.title}</p>
-          )}
-          
-          {/* Contact Details */}
-          <div className="flex flex-wrap gap-3 text-sm mt-4 opacity-95">
-            {contactSection.phone && <span>📱 {contactSection.phone}</span>}
-            {contactSection.email && (
-              <a href={`mailto:${contactSection.email}`} className="hover:underline">
-                ✉️ {contactSection.email}
-              </a>
-            )}
-            {(contactSection.address || contactSection.location) && (
-              <span>📍 {contactSection.address || contactSection.location}</span>
-            )}
-            {contactSection.linkedin && (
-              <a href={contactSection.linkedin} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                🔗 LinkedIn
-              </a>
-            )}
-            {contactSection.website && (
-              <a href={contactSection.website} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                🌐 Portfolio
-              </a>
+    <div className="w-full min-h-screen bg-white text-gray-800 font-sans p-6">
+      {/* Header - subtle orange band with name + photo */}
+      <div className="max-w-5xl mx-auto bg-white shadow-sm">
+        <div className="bg-orange-500 text-white rounded-t-md px-8 py-8 flex items-start justify-between gap-4">
+          <div className="flex-1">
+            {contact.name && <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{contact.name}</h1>}
+            {contact.tagline || contact.title ? (
+              <p className="mt-2 text-sm md:text-base opacity-90">{contact.tagline || contact.title}</p>
+            ) : null}
+
+            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-95">
+              {contact.phone && <div className="flex items-center gap-2"><Phone size={14} /> <span>{contact.phone}</span></div>}
+              {contact.email && <a className="flex items-center gap-2" href={`mailto:${contact.email}`}><Mail size={14} /> <span>{contact.email}</span></a>}
+              {contact.linkedin && <a className="flex items-center gap-2" href={contact.linkedin} target="_blank" rel="noreferrer"><Linkedin size={14} /> <span>LinkedIn</span></a>}
+              {contact.website && <a className="flex items-center gap-2" href={contact.website} target="_blank" rel="noreferrer"><Globe size={14} /> <span>Portfolio</span></a>}
+              {(contact.address || contact.location) && <div className="flex items-center gap-2"><MapPin size={14} /> <span>{contact.address || contact.location}</span></div>}
+            </div>
+          </div>
+
+          {/* Photo */}
+          <div className="w-24 h-24 md:w-28 md:h-28 rounded-md bg-white/20 overflow-hidden flex-shrink-0 relative group">
+            {tempPhoto || contact.photo ? (
+              <>
+                {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
+                <img src={tempPhoto || contact.photo} alt="profile photo" className="w-full h-full object-cover" />
+                {tempPhoto && (
+                  <button
+                    onClick={clearPhoto}
+                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition"
+                    title="Remove photo"
+                  >
+                    <X size={14} />
+                  </button>
+                )}
+              </>
+            ) : (
+              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-white/30 transition text-white/80 hover:text-white">
+                <Upload size={20} />
+                <span className="text-xs mt-1 text-center px-1 font-medium">Add Photo</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoUpload}
+                  className="hidden"
+                />
+              </label>
             )}
           </div>
         </div>
 
-        {/* Summary */}
-        {summarySection.text && (
-          <div className="mb-8 p-4 bg-purple-50 border-l-4 border-purple-500 rounded">
-            <p className="text-gray-700 leading-relaxed text-sm italic">{summarySection.text}</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-3 gap-6">
-          {/* Left Column - Skills */}
-          <div>
-            {skillsSection.items && skillsSection.items.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-lg font-bold text-purple-600 mb-4 pb-2 border-b-2 border-purple-300">
-                  💡 SKILLS
-                </h2>
-                <div className="space-y-2">
-                  {skillsSection.items.map((skill: string, idx: number) => (
-                    <div key={idx} className="flex items-center">
-                      <div className="w-2 h-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mr-2"></div>
-                      <span className="text-sm text-gray-700">{skill}</span>
+        {/* Content area: 2 columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-8 py-8">
+          {/* Left / Main column (2/3) */}
+          <div className="md:col-span-2 space-y-6">
+            {leftSections.map((section) => {
+              switch(section.type) {
+                case 'experience':
+                  return (
+                    <div key={section.id} className="pb-4 border-b">
+                      <h3 className="text-xl font-semibold text-gray-900">{section.content.title}</h3>
+                      <div className="flex items-center justify-between text-sm text-gray-600 mt-1">
+                        <div>{section.content.company}</div>
+                        <div className="whitespace-nowrap">{section.content.startDate && section.content.endDate ? `${section.content.startDate} – ${section.content.endDate}` : ''}</div>
+                      </div>
+                      {section.content.description && (
+                        <ul className="mt-3 text-sm text-gray-700 list-disc list-inside space-y-1">
+                          {section.content.description.split('\n').map((line: string, idx: number) => line.trim() ? <li key={idx}>{line.trim()}</li> : null)}
+                        </ul>
+                      )}
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
+                  );
 
-            {educationSections.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold text-purple-600 mb-4 pb-2 border-b-2 border-purple-300">
-                  🎓 EDUCATION
-                </h2>
-                <div className="space-y-3">
-                  {educationSections.map((section) => {
-                    const edu = section.content;
-                    return (
-                      <div key={section.id} className="text-sm">
-                        <p className="font-bold text-gray-900">{edu.degree}</p>
-                        <p className="text-purple-600 text-xs">{edu.institution}</p>
-                        {edu.startDate && edu.endDate && (
-                          <p className="text-gray-500 text-xs">{edu.startDate} - {edu.endDate}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                case 'projects':
+                  return (
+                    <div key={section.id} className="pb-4 border-b">
+                      <h3 className="text-lg font-semibold text-gray-900">{section.content.title}</h3>
+                      {section.content.date && <div className="text-sm text-gray-600 mt-1">{section.content.date}</div>}
+                      {section.content.description && <p className="mt-2 text-sm text-gray-700">{section.content.description}</p>}
+                      {section.content.link && <a href={section.content.link} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-orange-600 underline">{section.content.linkText || 'View project'}</a>}
+                    </div>
+                  );
+
+                case 'education':
+                  return (
+                    <div key={section.id} className="pb-4 border-b">
+                      <h3 className="text-lg font-semibold text-gray-900">{section.content.degree}</h3>
+                      <div className="text-sm text-gray-600">{section.content.institution}{section.content.fieldOfStudy ? ` — ${section.content.fieldOfStudy}` : ''}</div>
+                      {section.content.startDate && section.content.endDate && <div className="text-sm text-gray-600 mt-1">{section.content.startDate} – {section.content.endDate}</div>}
+                    </div>
+                  );
+
+                default:
+                  return null;
+              }
+            })}
           </div>
 
-          {/* Right Column - Experience & Projects */}
-          <div className="col-span-2">
-            {/* Experience */}
-            {experienceSections.length > 0 && (
-              <div className="mb-8">
-                <h2 className="text-lg font-bold text-purple-600 mb-4 pb-2 border-b-2 border-purple-300">
-                  💼 WORK EXPERIENCE
-                </h2>
-                <div className="space-y-5">
-                  {experienceSections.map((section) => {
-                    const exp = section.content;
-                    return (
-                      <div key={section.id} className="border-l-4 border-pink-500 pl-4">
-                        <p className="font-bold text-gray-900 text-base">{exp.title}</p>
-                        <p className="text-pink-600 font-semibold text-sm">{exp.company}</p>
-                        {exp.startDate && exp.endDate && (
-                          <p className="text-gray-500 text-xs mb-2">{exp.startDate} - {exp.endDate}</p>
-                        )}
-                        {exp.description && (
-                          <ul className="text-sm text-gray-700 space-y-1 mt-2">
-                            {exp.description.split('\n').map((line: string, idx: number) => (
-                              line.trim() && (
-                                <li key={idx} className="flex items-start">
-                                  <span className="text-pink-500 mr-2">★</span>
-                                  <span>{line.trim()}</span>
-                                </li>
-                              )
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          {/* Right / Sidebar */}
+          <aside className="space-y-6">
+            {rightSections.map((section) => {
+              switch(section.type) {
+                case 'summary':
+                  return (
+                    <div key={section.id} className="bg-gray-50 p-4 rounded border">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-2">Summary</h4>
+                      <p className="text-sm text-gray-700">{section.content.text}</p>
+                    </div>
+                  );
 
-            {/* Projects */}
-            {projectSections.length > 0 && (
-              <div>
-                <h2 className="text-lg font-bold text-purple-600 mb-4 pb-2 border-b-2 border-purple-300">
-                  🚀 PROJECTS
-                </h2>
-                <div className="space-y-4">
-                  {projectSections.map((section) => {
-                    const proj = section.content;
-                    return (
-                      <div key={section.id} className="bg-gray-50 p-3 rounded-lg border-l-4 border-red-500">
-                        <p className="font-bold text-gray-900">
-                          {proj.title}
-                          {proj.link && (
-                            <> • <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-red-500 hover:underline text-sm">{proj.linkText || 'Link'}</a></>
-                          )}
-                        </p>
-                        {proj.description && (
-                          <p className="text-sm text-gray-700 mt-1">{proj.description}</p>
-                        )}
+                case 'skills':
+                  return (
+                    <div key={section.id} className="bg-gray-50 p-4 rounded border">
+                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {section.content.skills?.split(',').map((s: string, i: number) => (
+                          <span key={i} className="text-xs px-2 py-1 bg-white border rounded text-gray-700">{s.trim()}</span>
+                        ))}
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
+                    </div>
+                  );
+
+                default:
+                  return null;
+              }
+            })}
+
+            {/* Small footer note */}
+            <div className="text-xs text-gray-500">Designed with ✨ by Engaze</div>
+          </aside>
         </div>
       </div>
     </div>

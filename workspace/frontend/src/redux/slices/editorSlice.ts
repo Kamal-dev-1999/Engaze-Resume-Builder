@@ -158,6 +158,7 @@ const editorSlice = createSlice({
     },
     reorderSectionsLocally: (state, action) => {
       if (state.resumeDetail?.sections) {
+        console.log('reorderSectionsLocally - New order:', action.payload);
         // Create a mapping of id to section
         const sectionMap = new Map();
         state.resumeDetail.sections.forEach(section => {
@@ -173,6 +174,7 @@ const editorSlice = createSlice({
         });
         
         state.resumeDetail.sections = newSections;
+        console.log('reorderSectionsLocally - Updated sections:', newSections.map((s: Section) => ({ id: s.id, type: s.type, order: s.order })));
         state.isDirty = true;
         // Save to history after reorder
         state.history = state.history.slice(0, state.historyIndex + 1);

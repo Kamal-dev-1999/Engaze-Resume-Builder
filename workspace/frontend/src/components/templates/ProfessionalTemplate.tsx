@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Section {
   id: number;
@@ -12,235 +12,215 @@ interface ProfessionalTemplateProps {
   sections: Section[];
 }
 
-const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({ resumeTitle, sections }) => {
-  const contactSection = sections.find(s => s.type === 'contact')?.content || {};
-  const summarySection = sections.find(s => s.type === 'summary')?.content || {};
-  const educationSections = sections.filter(s => s.type === 'education');
-  const skillsSection = sections.find(s => s.type === 'skills')?.content || {};
-  const experienceSections = sections.filter(s => s.type === 'experience');
-  const projectSections = sections.filter(s => s.type === 'projects');
-
-  const ContactHeader = () => (
-    <div className="border-b border-gray-400 pb-2 mb-4">
-      {/* Name */}
-      {contactSection.name && (
-        <h1 className="text-3xl font-bold tracking-tight">{contactSection.name}</h1>
-      )}
-      
-      {/* Contact Details in one line */}
-      <div className="text-xs text-gray-700 mt-1 flex flex-wrap gap-2 items-center">
-        {contactSection.phone && (
-          <span>{contactSection.phone}</span>
-        )}
-        {contactSection.email && (
-          <>
-            {contactSection.phone && <span>|</span>}
-            <a href={`mailto:${contactSection.email}`} className="text-blue-600 hover:underline">
-              {contactSection.email}
-            </a>
-          </>
-        )}
-        {(contactSection.address || contactSection.location) && (
-          <>
-            <span>|</span>
-            <span>{contactSection.address || contactSection.location}</span>
-          </>
-        )}
-        {contactSection.linkedin && (
-          <>
-            <span>|</span>
-            <a href={contactSection.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              LinkedIn
-            </a>
-          </>
-        )}
-        {contactSection.website && (
-          <>
-            <span>|</span>
-            <a href={contactSection.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-              Portfolio
-            </a>
-          </>
-        )}
-      </div>
-    </div>
-  );
-
-  const SummarySection = () => {
-    if (!summarySection.text) return null;
-    return (
-      <div className="mb-4">
-        <p className="text-sm leading-relaxed text-gray-800">{summarySection.text}</p>
-      </div>
-    );
-  };
-
-  const EducationSection = () => {
-    if (educationSections.length === 0) return null;
-    return (
-      <div className="mb-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider border-b border-gray-400 pb-1 mb-2">
-          ACADEMIC QUALIFICATIONS
-        </h2>
-        <div className="space-y-3">
-          {educationSections.map((section) => {
-            const edu = section.content;
-            return (
-              <div key={section.id}>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-bold text-sm">{edu.degree}</p>
-                    <p className="text-xs text-gray-700">
-                      {edu.institution} | {edu.fieldOfStudy}
-                    </p>
-                  </div>
-                  <div className="text-xs text-gray-700 text-right whitespace-nowrap">
-                    {edu.startDate && edu.endDate && (
-                      <p>{edu.startDate} – {edu.endDate}</p>
-                    )}
-                    {edu.gpa && <p>GPA – {edu.gpa}</p>}
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
-  const SkillsSection = () => {
-    if (!skillsSection.items || skillsSection.items.length === 0) return null;
-    
-    // Group skills by category if available
-    const skillsByCategory = skillsSection.categories ? 
-      Object.entries(skillsSection.categories).map(([cat, skills]: [string, any]) => ({
-        category: cat,
-        skills: Array.isArray(skills) ? skills : []
-      })) :
-      [{ category: '', skills: skillsSection.items || [] }];
-
-    return (
-      <div className="mb-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider border-b border-gray-400 pb-1 mb-2">
-          SKILLS
-        </h2>
-        <div className="space-y-2">
-          {skillsByCategory.map((group, idx) => {
-            const skills = group.skills;
-            if (!Array.isArray(skills)) return null;
-            
-            return (
-              <div key={idx}>
-                {group.category && (
-                  <p className="font-bold text-xs mb-1">{group.category}:</p>
-                )}
-                <p className="text-xs text-gray-800">
-                  {skills.join(', ')}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
-  const ExperienceSection = () => {
-    if (experienceSections.length === 0) return null;
-    return (
-      <div className="mb-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider border-b border-gray-400 pb-1 mb-2">
-          WORK EXPERIENCE
-        </h2>
-        <div className="space-y-3">
-          {experienceSections.map((section) => {
-            const exp = section.content;
-            return (
-              <div key={section.id}>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="font-bold text-sm">{exp.title}</p>
-                    <p className="text-xs text-gray-700">{exp.company}</p>
-                  </div>
-                  <div className="text-xs text-gray-700 text-right whitespace-nowrap ml-4">
-                    {exp.startDate && exp.endDate && (
-                      <p>{exp.startDate} - {exp.endDate}</p>
-                    )}
-                  </div>
-                </div>
-                {exp.description && (
-                  <ul className="mt-1 text-xs text-gray-800 space-y-0.5 ml-4">
-                    {exp.description.split('\n').map((line: string, idx: number) => (
-                      line.trim() && (
-                        <li key={idx} className="list-disc">
-                          {line.trim()}
-                        </li>
-                      )
-                    ))}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
-
-  const ProjectsSection = () => {
-    if (projectSections.length === 0) return null;
-    return (
-      <div className="mb-4">
-        <h2 className="text-xs font-bold uppercase tracking-wider border-b border-gray-400 pb-1 mb-2">
-          PROJECTS
-        </h2>
-        <div className="space-y-3">
-          {projectSections.map((section) => {
-            const proj = section.content;
-            return (
-              <div key={section.id}>
-                <div className="flex justify-between items-start">
-                  <div className="flex-1">
-                    <p className="font-bold text-sm">
-                      {proj.title}
-                      {proj.link && (
-                        <> – <a href={proj.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{proj.linkText || 'Link'}</a></>
-                      )}
-                    </p>
-                  </div>
-                  <div className="text-xs text-gray-700 text-right whitespace-nowrap ml-4">
-                    {proj.date && <p>{proj.date}</p>}
-                  </div>
-                </div>
-                {proj.description && (
-                  <ul className="mt-1 text-xs text-gray-800 space-y-0.5 ml-4">
-                    {proj.description.split('\n').map((line: string, idx: number) => (
-                      line.trim() && (
-                        <li key={idx} className="list-disc">
-                          {line.trim()}
-                        </li>
-                      )
-                    ))}
-                  </ul>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
+const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
+  resumeTitle,
+  sections,
+}) => {
+  const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+  const contactSection = sections.find((s) => s.type === "contact")?.content || {};
 
   return (
-    <div className="w-full h-full bg-white text-gray-900 p-8 font-sans">
-      <div className="max-w-full text-sm leading-relaxed">
-        <ContactHeader />
-        <SummarySection />
-        <EducationSection />
-        <SkillsSection />
-        <ExperienceSection />
-        <ProjectsSection />
+    <div className="w-full h-full bg-white text-gray-900 p-10 font-['Inter'] leading-relaxed tracking-tight">
+      <div className="max-w-[800px] mx-auto text-[13px]">
+        {/* Header */}
+        <header className="border-b border-gray-300 pb-3 mb-6 text-center">
+          {contactSection.name && (
+            <h1 className="text-3xl font-extrabold text-gray-900 uppercase tracking-wide">
+              {contactSection.name}
+            </h1>
+          )}
+          <div className="text-xs text-gray-700 mt-2 flex flex-wrap justify-center gap-2">
+            {contactSection.phone && <span>{contactSection.phone}</span>}
+            {contactSection.email && (
+              <>
+                <span>•</span>
+                <a
+                  href={`mailto:${contactSection.email}`}
+                  className="text-blue-700 hover:underline"
+                >
+                  {contactSection.email}
+                </a>
+              </>
+            )}
+            {(contactSection.address || contactSection.location) && (
+              <>
+                <span>•</span>
+                <span>{contactSection.address || contactSection.location}</span>
+              </>
+            )}
+            {contactSection.linkedin && (
+              <>
+                <span>•</span>
+                <a
+                  href={contactSection.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-700 hover:underline"
+                >
+                  LinkedIn
+                </a>
+              </>
+            )}
+            {contactSection.website && (
+              <>
+                <span>•</span>
+                <a
+                  href={contactSection.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-700 hover:underline"
+                >
+                  Portfolio
+                </a>
+              </>
+            )}
+          </div>
+        </header>
+
+        {/* Sections */}
+        <main className="space-y-6">
+          {sortedSections.map((section) => {
+            switch (section.type) {
+              case "summary":
+                return (
+                  <section key={section.id}>
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                      Professional Summary
+                    </h2>
+                    <p className="text-[13px] text-gray-800 leading-relaxed">
+                      {section.content.text}
+                    </p>
+                  </section>
+                );
+
+              case "education":
+                return (
+                  <section key={section.id}>
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                      Education
+                    </h2>
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-[13px]">
+                            {section.content.degree}
+                          </p>
+                          <p className="text-xs text-gray-700">
+                            {section.content.institution} —{" "}
+                            {section.content.fieldOfStudy}
+                          </p>
+                        </div>
+                        <div className="text-xs text-gray-700 whitespace-nowrap">
+                          {section.content.startDate && section.content.endDate && (
+                            <p>
+                              {section.content.startDate} – {section.content.endDate}
+                            </p>
+                          )}
+                          {section.content.gpa && <p>GPA: {section.content.gpa}</p>}
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                );
+
+              case "skills":
+                return (
+                  <section key={section.id}>
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                      Skills
+                    </h2>
+                    <p className="text-[13px] text-gray-800">
+                      {section.content.skills}
+                    </p>
+                  </section>
+                );
+
+              case "experience":
+                return (
+                  <section key={section.id}>
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                      Work Experience
+                    </h2>
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-[13px]">
+                            {section.content.jobTitle}
+                          </p>
+                          <p className="text-xs text-gray-700">
+                            {section.content.companyName}
+                          </p>
+                        </div>
+                        <div className="text-xs text-gray-700 whitespace-nowrap">
+                          {section.content.startDate && section.content.endDate && (
+                            <p>
+                              {section.content.startDate} – {section.content.endDate}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      {section.content.description && (
+                        <ul className="mt-1 text-[13px] text-gray-800 list-disc list-inside space-y-0.5">
+                          {section.content.description
+                            .split("\n")
+                            .map((line: string, idx: number) =>
+                              line.trim() ? <li key={idx}>{line.trim()}</li> : null
+                            )}
+                        </ul>
+                      )}
+                    </div>
+                  </section>
+                );
+
+              case "projects":
+                return (
+                  <section key={section.id}>
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                      Projects
+                    </h2>
+                    <div>
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <p className="font-semibold text-[13px]">
+                            {section.content.title}{" "}
+                            {section.content.link && (
+                              <>
+                                <a
+                                  href={section.content.link}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-blue-700 hover:underline text-xs ml-1"
+                                >
+                                  ({section.content.linkText || "Link"})
+                                </a>
+                              </>
+                            )}
+                          </p>
+                        </div>
+                        {section.content.date && (
+                          <p className="text-xs text-gray-700 whitespace-nowrap">
+                            {section.content.date}
+                          </p>
+                        )}
+                      </div>
+                      {section.content.description && (
+                        <ul className="mt-1 text-[13px] text-gray-800 list-disc list-inside space-y-0.5">
+                          {section.content.description
+                            .split("\n")
+                            .map((line: string, idx: number) =>
+                              line.trim() ? <li key={idx}>{line.trim()}</li> : null
+                            )}
+                        </ul>
+                      )}
+                    </div>
+                  </section>
+                );
+
+              default:
+                return null;
+            }
+          })}
+        </main>
       </div>
     </div>
   );
