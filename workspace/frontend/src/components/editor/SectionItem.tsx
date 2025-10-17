@@ -11,7 +11,7 @@ interface SectionItemProps {
   onEdit: (sectionId: number) => void;
   onDelete: (sectionId: number) => void;
   onFormat?: (sectionId: number) => void;
-  dragHandleProps: any;
+  dragHandleProps?: any;
 }
 
 const SectionItem: React.FC<SectionItemProps> = ({ 
@@ -19,7 +19,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
   onEdit, 
   onDelete,
   onFormat = () => {}, // Default empty function if not provided
-  dragHandleProps 
+  dragHandleProps
 }) => {
   const getSectionIcon = (type: string) => {
     switch (type) {
@@ -74,14 +74,20 @@ const SectionItem: React.FC<SectionItemProps> = ({
   };
 
   return (
-    <div className="bg-white p-3 rounded-md shadow border border-gray-200 flex items-center justify-between mb-2">
+    <div className="bg-white p-3 rounded-md shadow border border-gray-200 flex items-center justify-between mb-2 hover:shadow-md hover:border-blue-300 transition-all select-none" style={{ userSelect: 'none', WebkitUserSelect: 'none' }}>
       <div className="flex items-center">
         <div 
-          className="cursor-move mr-2 p-1 hover:bg-gray-100 rounded" 
+          className="cursor-grab active:cursor-grabbing mr-3 p-2 hover:bg-blue-50 rounded transition-all hover:scale-110 group" 
           {...dragHandleProps}
+          title="Drag to reorder"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
+            <circle cx="6" cy="6" r="2" />
+            <circle cx="18" cy="6" r="2" />
+            <circle cx="6" cy="12" r="2" />
+            <circle cx="18" cy="12" r="2" />
+            <circle cx="6" cy="18" r="2" />
+            <circle cx="18" cy="18" r="2" />
           </svg>
         </div>
         <div className="flex items-center">
@@ -97,7 +103,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
       <div className="flex space-x-1">
         <button 
           onClick={() => onEdit(section.id)}
-          className="p-1.5 bg-gray-100 hover:bg-gray-200 rounded-md text-gray-700"
+          className="p-1.5 bg-gray-100 hover:bg-blue-100 hover:scale-110 rounded-md text-gray-700 hover:text-blue-600 transition-all transform"
           title="Edit section"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -106,7 +112,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
         </button>
         <button 
           onClick={() => onFormat(section.id)}
-          className="p-1.5 bg-gray-100 hover:bg-blue-100 rounded-md text-gray-700 hover:text-blue-600"
+          className="p-1.5 bg-gray-100 hover:bg-blue-100 hover:scale-110 rounded-md text-gray-700 hover:text-blue-600 transition-all transform"
           title="Format section"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -115,7 +121,7 @@ const SectionItem: React.FC<SectionItemProps> = ({
         </button>
         <button 
           onClick={() => onDelete(section.id)}
-          className="p-1.5 bg-gray-100 hover:bg-red-100 rounded-md text-gray-700 hover:text-red-600"
+          className="p-1.5 bg-gray-100 hover:bg-red-100 hover:scale-110 rounded-md text-gray-700 hover:text-red-600 transition-all transform"
           title="Delete section"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

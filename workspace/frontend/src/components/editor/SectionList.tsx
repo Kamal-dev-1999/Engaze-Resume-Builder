@@ -1,6 +1,6 @@
-import React from 'react';
-// @ts-ignore - Ignoring type issues with react-beautiful-dnd
-import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
+import React, { useCallback } from 'react';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import type { DropResult } from 'react-beautiful-dnd';
 import SectionItem from './SectionItem';
 
 interface Section {
@@ -25,25 +25,30 @@ const SectionList: React.FC<SectionListProps> = ({
   onReorder,
   onFormat = () => {} // Default empty function if not provided
 }) => {
-  const handleDragEnd = (result: DropResult) => {
+  const sortedSections = sections && Array.isArray(sections) 
+    ? [...sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    : [];
+
+  console.log('SectionList render - Total sections:', sortedSections.length, 'Section IDs:', sortedSections.map(s => s.id));
+
+  const handleDragEnd = useCallback((result: DropResult) => {
+    console.log('Drag End - Source:', result.source.index, 'Destination:', result.destination?.index);
+    
     if (!result.destination || result.destination.index === result.source.index) {
       return;
     }
 
     try {
-      const reorderedSections = Array.from(sections);
+      const reorderedSections = Array.from(sortedSections);
       const [movedSection] = reorderedSections.splice(result.source.index, 1);
       reorderedSections.splice(result.destination.index, 0, movedSection);
       const newOrderIds = reorderedSections.map(section => section.id);
+      console.log('New order IDs:', newOrderIds);
       onReorder(newOrderIds);
     } catch (error) {
       console.error('Error reordering sections:', error);
     }
-  };
-
-  const sortedSections = sections && Array.isArray(sections) 
-    ? [...sections].sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-    : [];
+  }, [sortedSections, onReorder]);
 
   if (sortedSections.length === 0) {
     return (
@@ -55,30 +60,39 @@ const SectionList: React.FC<SectionListProps> = ({
 
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable droppableId="sections-list">
-        {(provided) => (
+      <Droppable droppableId="sections-list" type="SECTION">
+        {(provided, snapshot) => (
           <div 
             {...provided.droppableProps}
             ref={provided.innerRef}
-            className="space-y-2"
+            className={`space-y-2 ${snapshot.isDraggingOver ? 'bg-blue-50 rounded-lg p-2' : ''}`}
+            style={{ 
+              userSelect: 'none',
+              minHeight: '100px'
+            }}
           >
             {sortedSections.map((section, index) => (
               <Draggable 
-                key={`section-${section.id}`} 
-                draggableId={`section-${section.id}`} 
+                key={`drag-${section.id}`}
+                draggableId={`drag-${section.id}`} 
                 index={index}
               >
-                {(provided) => (
+                {(provided, snapshot) => (
                   <div
                     ref={provided.innerRef}
-                    {...provided.draggableProps}    // ✅ FIXED: must spread draggableProps
-                    {...provided.dragHandleProps}   // ✅ FIXED: drag handle support
+                    {...provided.draggableProps}
+                    style={{
+                      userSelect: 'none',
+                      ...provided.draggableProps.style
+                    }}
+                    className={`transition-all user-select-none ${snapshot.isDragging ? 'opacity-50 scale-95 shadow-lg' : 'opacity-100 scale-100'}`}
                   >
                     <SectionItem 
                       section={section}
                       onEdit={onEdit}
                       onDelete={onDelete}
                       onFormat={onFormat}
+                      dragHandleProps={provided.dragHandleProps}
                     />
                   </div>
                 )}
