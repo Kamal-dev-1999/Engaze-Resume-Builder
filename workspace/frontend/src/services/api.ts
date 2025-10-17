@@ -189,30 +189,24 @@ export const resumeAPI = {
   
   updateSection: async (resumeId: number, section: any) => {
     console.log('API updateSection called:', { resumeId, section });
-    // Check if we have formatting data
-    if (section.content?.formatting) {
-      console.log('Section formatting included:', section.content.formatting);
-    }
+    
+    // Prepare the data to send - only send the fields that should be updated
+    const dataToSend = {
+      type: section.type,
+      content: section.content,
+      order: section.order
+    };
+    
+    console.log('Data to send to backend:', dataToSend);
+    
     try {
-      const response = await api.patch(`sections/${section.id}/`, section);
+      const response = await api.patch(`sections/${section.id}/`, dataToSend);
       console.log('API updateSection success response:', response.data);
       return response.data;
     } catch (error: any) {
       console.error('API updateSection error:', error);
-      // Create a more readable error message
-      const errorMessage = error.response?.data?.detail || 
-                          error.message || 
-                          'Failed to update section';
-      
-      // Log minimal error details without sensitive information
-      console.error(`API Error: Status=${error.response?.status}`);
-      
-      // Convert object errors to strings
-      const enhancedError = new Error(typeof errorMessage === 'object' 
-        ? JSON.stringify(errorMessage)
-        : errorMessage);
-        
-      throw enhancedError;
+      console.error('Error response:', error.response?.data);
+      throw error;
     }
   },
   

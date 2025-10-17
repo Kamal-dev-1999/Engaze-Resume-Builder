@@ -18,8 +18,10 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel
   const [errors, setErrors] = useState<Record<string, string>>({});
   
   useEffect(() => {
+    console.log('SectionEditor useEffect - section:', section);
     if (section) {
       // Initialize form data with section content
+      console.log('Setting formData with section.content:', section.content);
       setFormData({
         ...section.content
       });
@@ -115,6 +117,10 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('SectionEditor handleSubmit called');
+    console.log('validate() result:', validate());
+    console.log('section:', section);
+    console.log('formData:', formData);
     
     if (validate() && section) {
       // Save the form data
@@ -123,7 +129,10 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel
         content: formData
       };
       
+      console.log('Calling onSave with updatedSection:', updatedSection);
       onSave(updatedSection);
+    } else {
+      console.warn('Validation failed or no section');
     }
   };
   

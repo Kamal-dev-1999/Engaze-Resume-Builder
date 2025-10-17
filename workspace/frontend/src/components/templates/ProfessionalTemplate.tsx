@@ -19,61 +19,105 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
   const contactSection = sections.find((s) => s.type === "contact")?.content || {};
 
+  // Helper function to apply formatting styles
+  const getFormattingStyles = (formatting: any = {}) => {
+    const style: React.CSSProperties = {};
+    
+    if (formatting.textColor) {
+      style.color = formatting.textColor;
+    }
+    if (formatting.backgroundColor && formatting.backgroundColor !== 'transparent') {
+      style.backgroundColor = formatting.backgroundColor;
+    }
+    if (formatting.fontFamily) {
+      style.fontFamily = formatting.fontFamily;
+    }
+    if (formatting.fontSize) {
+      style.fontSize = `${formatting.fontSize}px`;
+    }
+    if (formatting.fontWeight) {
+      style.fontWeight = formatting.fontWeight as React.CSSProperties['fontWeight'];
+    }
+    if (formatting.textAlign) {
+      style.textAlign = formatting.textAlign as React.CSSProperties['textAlign'];
+    }
+    if (formatting.padding !== undefined && formatting.padding > 0) {
+      style.padding = `${formatting.padding}px`;
+    }
+    if (formatting.margin !== undefined && formatting.margin > 0) {
+      style.margin = `${formatting.margin}px`;
+    }
+    if (formatting.borderWidth && formatting.borderWidth > 0) {
+      style.border = `${formatting.borderWidth}px solid ${formatting.borderColor || '#d1d5db'}`;
+      if (formatting.borderRadius) {
+        style.borderRadius = `${formatting.borderRadius}px`;
+      }
+    }
+    
+    return style;
+  };
+
   return (
     <div className="w-full h-full bg-white text-gray-900 p-10 font-['Inter'] leading-relaxed tracking-tight">
       <div className="max-w-[800px] mx-auto text-[13px]">
-        {/* Header */}
-        <header className="border-b border-gray-300 pb-3 mb-6 text-center">
+        {/* Header - Contact Section */}
+        <header className="border-b-2 border-gray-400 pb-4 mb-6 text-center">
           {contactSection.name && (
-            <h1 className="text-3xl font-extrabold text-gray-900 uppercase tracking-wide">
+            <h1 className="text-4xl font-bold text-gray-900 uppercase tracking-tight mb-3">
               {contactSection.name}
             </h1>
           )}
-          <div className="text-xs text-gray-700 mt-2 flex flex-wrap justify-center gap-2">
-            {contactSection.phone && <span>{contactSection.phone}</span>}
-            {contactSection.email && (
-              <>
-                <span>•</span>
-                <a
-                  href={`mailto:${contactSection.email}`}
-                  className="text-blue-700 hover:underline"
-                >
-                  {contactSection.email}
-                </a>
-              </>
-            )}
-            {(contactSection.address || contactSection.location) && (
-              <>
-                <span>•</span>
-                <span>{contactSection.address || contactSection.location}</span>
-              </>
-            )}
-            {contactSection.linkedin && (
-              <>
-                <span>•</span>
+          <div className="text-xs text-gray-700 space-y-1">
+            {/* Contact Details Row 1 */}
+            <div className="flex flex-wrap justify-center gap-3 text-[12px]">
+              {contactSection.phone && (
+                <span className="inline-block">{contactSection.phone}</span>
+              )}
+              {contactSection.email && (
+                <>
+                  {contactSection.phone && <span className="inline-block">•</span>}
+                  <a
+                    href={`mailto:${contactSection.email}`}
+                    className="text-blue-600 hover:underline inline-block"
+                  >
+                    {contactSection.email}
+                  </a>
+                </>
+              )}
+              {(contactSection.address || contactSection.location) && (
+                <>
+                  {(contactSection.phone || contactSection.email) && <span className="inline-block">•</span>}
+                  <span className="inline-block">{contactSection.address || contactSection.location}</span>
+                </>
+              )}
+            </div>
+            
+            {/* Contact Details Row 2 */}
+            <div className="flex flex-wrap justify-center gap-3 text-[12px]">
+              {contactSection.linkedin && (
                 <a
                   href={contactSection.linkedin}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-blue-700 hover:underline"
+                  className="text-blue-600 hover:underline inline-block"
                 >
                   LinkedIn
                 </a>
-              </>
-            )}
-            {contactSection.website && (
-              <>
-                <span>•</span>
-                <a
-                  href={contactSection.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-700 hover:underline"
-                >
-                  Portfolio
-                </a>
-              </>
-            )}
+              )}
+              {contactSection.website && (
+                <>
+                  {contactSection.linkedin && <span className="inline-block">•</span>}
+                  <a
+                    href={contactSection.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:underline inline-block"
+                  >
+                    Portfolio
+                  </a>
+                </>
+              )}
+            </div>
           </div>
         </header>
 
@@ -83,7 +127,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
             switch (section.type) {
               case "summary":
                 return (
-                  <section key={section.id} className="mb-4">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
                     <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Professional Summary
                     </h2>
@@ -95,7 +139,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "education":
                 return (
-                  <section key={section.id} className="mb-4">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
                     <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Education
                     </h2>
@@ -127,7 +171,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "skills":
                 return (
-                  <section key={section.id} className="mb-4">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
                     <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Skills
                     </h2>
@@ -139,7 +183,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "experience":
                 return (
-                  <section key={section.id} className="mb-4">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
                     <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Work Experience
                     </h2>
@@ -172,7 +216,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "projects":
                 return (
-                  <section key={section.id} className="mb-4">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
                     <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Projects
                     </h2>

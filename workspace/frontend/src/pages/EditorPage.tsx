@@ -85,11 +85,21 @@ const EditorPage: React.FC = () => {
   };
   
   const handleSectionEdit = (sectionId: number) => {
+    console.log('handleSectionEdit called with sectionId:', sectionId);
+    console.log('resumeDetail:', resumeDetail);
+    console.log('resumeDetail.sections:', resumeDetail?.sections);
+    
     if (resumeDetail && resumeDetail.sections) {
       const section = resumeDetail.sections.find(s => s.id === sectionId);
+      console.log('Found section:', section);
       if (section) {
         setEditingSection(section);
+        console.log('EditingSection set to:', section);
+      } else {
+        console.warn('Section not found with id:', sectionId);
       }
+    } else {
+      console.warn('No resumeDetail or sections available');
     }
   };
   
@@ -99,13 +109,34 @@ const EditorPage: React.FC = () => {
     }
   };
   
-  const handleSectionSave = (updatedSection: Section) => {
-    dispatch(updateSectionLocally(updatedSection));
-    dispatch(updateResumeSection({ 
-      resumeId: parseInt(resumeId as string), 
-      section: updatedSection 
-    }));
-    setEditingSection(null);
+  const handleSectionSave = async (updatedSection: Section) => {
+    console.log('handleSectionSave called with:', updatedSection);
+    
+    try {
+      // First update locally for immediate UI feedback
+      dispatch(updateSectionLocally(updatedSection));
+      console.log('Updated locally');
+      
+      // Then save to backend
+      console.log('Sending to backend...');
+      const result = await dispatch(updateResumeSection({ 
+        resumeId: parseInt(resumeId as string), 
+        section: updatedSection 
+      })).unwrap();
+      
+      console.log('Backend response:', result);
+      
+      // Update with the backend response (in case it has additional data)
+      if (result && result.id) {
+        dispatch(updateSectionLocally(result));
+        console.log('Updated with backend response');
+      }
+      
+      setEditingSection(null);
+    } catch (err) {
+      console.error('Error saving section:', err);
+      alert('Failed to save changes. Please try again.');
+    }
   };
   
   const handleSectionReorder = (newOrderIds: number[]) => {
@@ -535,24 +566,28 @@ const EditorPage: React.FC = () => {
                               <div className="w-full">
                                 {resumeDetail.template_name === 'modern' && (
                                   <ModernTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
                                     resumeTitle={resumeDetail.title}
                                     sections={resumeDetail.sections}
                                   />
                                 )}
                                 {resumeDetail.template_name === 'creative' && (
                                   <CreativeTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
                                     resumeTitle={resumeDetail.title}
                                     sections={resumeDetail.sections}
                                   />
                                 )}
                                 {resumeDetail.template_name === 'minimalist' && (
                                   <MinimalistTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
                                     resumeTitle={resumeDetail.title}
                                     sections={resumeDetail.sections}
                                   />
                                 )}
                                 {(!resumeDetail.template_name || resumeDetail.template_name === 'professional') && (
                                   <ProfessionalTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
                                     resumeTitle={resumeDetail.title}
                                     sections={resumeDetail.sections}
                                   />
