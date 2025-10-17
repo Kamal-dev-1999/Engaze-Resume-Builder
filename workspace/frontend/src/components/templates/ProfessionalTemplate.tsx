@@ -78,13 +78,13 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
         </header>
 
         {/* Sections */}
-        <main className="space-y-6">
+        <main className="space-y-3">
           {sortedSections.map((section) => {
             switch (section.type) {
               case "summary":
                 return (
-                  <section key={section.id}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4">
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Professional Summary
                     </h2>
                     <p className="text-[13px] text-gray-800 leading-relaxed">
@@ -95,22 +95,24 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "education":
                 return (
-                  <section key={section.id}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4">
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Education
                     </h2>
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <div>
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
                           <p className="font-semibold text-[13px]">
                             {section.content.degree}
                           </p>
                           <p className="text-xs text-gray-700">
-                            {section.content.institution} —{" "}
-                            {section.content.fieldOfStudy}
+                            {section.content.institution}
+                            {section.content.fieldOfStudy && (
+                              <> — {section.content.fieldOfStudy}</>
+                            )}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-700 whitespace-nowrap">
+                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0">
                           {section.content.startDate && section.content.endDate && (
                             <p>
                               {section.content.startDate} – {section.content.endDate}
@@ -125,11 +127,11 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "skills":
                 return (
-                  <section key={section.id}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4">
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Skills
                     </h2>
-                    <p className="text-[13px] text-gray-800">
+                    <p className="text-[13px] text-gray-800 leading-relaxed">
                       {section.content.skills}
                     </p>
                   </section>
@@ -137,21 +139,21 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "experience":
                 return (
-                  <section key={section.id}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4">
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Work Experience
                     </h2>
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
                           <p className="font-semibold text-[13px]">
                             {section.content.jobTitle}
                           </p>
                           <p className="text-xs text-gray-700">
-                            {section.content.companyName}
+                            {section.content.company}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-700 whitespace-nowrap">
+                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0">
                           {section.content.startDate && section.content.endDate && (
                             <p>
                               {section.content.startDate} – {section.content.endDate}
@@ -160,13 +162,9 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                         </div>
                       </div>
                       {section.content.description && (
-                        <ul className="mt-1 text-[13px] text-gray-800 list-disc list-inside space-y-0.5">
-                          {section.content.description
-                            .split("\n")
-                            .map((line: string, idx: number) =>
-                              line.trim() ? <li key={idx}>{line.trim()}</li> : null
-                            )}
-                        </ul>
+                        <p className="text-[13px] text-gray-800 leading-relaxed pl-2">
+                          {section.content.description}
+                        </p>
                       )}
                     </div>
                   </section>
@@ -174,43 +172,32 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "projects":
                 return (
-                  <section key={section.id}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4">
+                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-2 border-b border-gray-200">
                       Projects
                     </h2>
-                    <div>
-                      <div className="flex justify-between items-start">
-                        <div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
                           <p className="font-semibold text-[13px]">
-                            {section.content.title}{" "}
+                            {section.content.name}
                             {section.content.link && (
-                              <>
-                                <a
-                                  href={section.content.link}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-blue-700 hover:underline text-xs ml-1"
-                                >
-                                  ({section.content.linkText || "Link"})
-                                </a>
-                              </>
+                              <a
+                                href={section.content.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-700 hover:underline text-xs ml-2"
+                              >
+                                (Link)
+                              </a>
                             )}
                           </p>
                         </div>
-                        {section.content.date && (
-                          <p className="text-xs text-gray-700 whitespace-nowrap">
-                            {section.content.date}
-                          </p>
-                        )}
                       </div>
                       {section.content.description && (
-                        <ul className="mt-1 text-[13px] text-gray-800 list-disc list-inside space-y-0.5">
-                          {section.content.description
-                            .split("\n")
-                            .map((line: string, idx: number) =>
-                              line.trim() ? <li key={idx}>{line.trim()}</li> : null
-                            )}
-                        </ul>
+                        <p className="text-[13px] text-gray-800 leading-relaxed pl-2">
+                          {section.content.description}
+                        </p>
                       )}
                     </div>
                   </section>
