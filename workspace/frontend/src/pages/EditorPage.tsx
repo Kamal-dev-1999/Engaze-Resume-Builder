@@ -13,18 +13,21 @@ import {
   addSection,
   deleteSection,
   undo,
-  redo
+  redo,
+  importResumeData
 } from '../redux/slices/editorSlice';
 import SectionList from '../components/editor/SectionList';
 import SectionEditor from '../components/editor/SectionEditor';
 import SectionFormattingPanel from '../components/editor/SectionFormattingPanel';
 import AddSection from '../components/editor/AddSection';
 import UndoRedoToolbar from '../components/editor/UndoRedoToolbar';
+import ResumeImportModal from '../components/editor/ResumeImportModal';
 import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
 import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
 import MinimalistTemplate from '../components/templates/MinimalistTemplate';
 import DownloadResumeButton from '../components/DownloadResumeButton';
+import type { ParsedResume } from '../utils/resumeParser';
 
 interface Section {
   id: number;
@@ -47,6 +50,9 @@ const EditorPage: React.FC = () => {
   
   // State for the section formatting
   const [formattingSection, setFormattingSection] = useState<Section | null>(null);
+  
+  // State for resume import modal
+  const [showImportModal, setShowImportModal] = useState(false);
   
   // State for resume preview ref
   const resumePreviewRef = useRef<HTMLDivElement>(null);
@@ -178,6 +184,207 @@ const EditorPage: React.FC = () => {
     }
   };
 
+  const handleImportResume = async (parsedData: ParsedResume) => {
+    console.log('handleImportResume called with data:', parsedData);
+    
+    if (!resumeDetail) {
+      console.error('No resume detail found');
+      return;
+    }
+
+    try {
+      // If sections are empty, we need to create default sections first
+      if (!resumeDetail.sections || resumeDetail.sections.length === 0) {
+        console.log('No sections found, creating default sections...');
+        
+        // Define default sections based on template structure
+        const defaultSectionTypes = ['contact', 'summary', 'experience', 'education', 'skills', 'projects'];
+        const defaultSections: Section[] = [];
+        
+        // Create default sections with empty content
+        defaultSectionTypes.forEach((type, index) => {
+          let defaultContent: any = {};
+          
+          switch (type) {
+            case 'contact':
+              defaultContent = { name: '', email: '', phone: '', location: '', address: '', website: '', linkedin: '' };
+              break;
+            case 'summary':
+              defaultContent = { text: '' };
+              break;
+            case 'skills':
+              defaultContent = { skills: '' };
+              break;
+            case 'experience':
+            case 'education':
+            case 'projects':
+              defaultContent = {};
+              break;
+          }
+          
+          defaultSections.push({
+            id: index + 1, // Temporary IDs, will be replaced by backend
+            type,
+            content: defaultContent,
+            order: index
+          });
+        });
+        
+        // Create sections on backend
+        console.log('Creating default sections on backend...');
+        for (const section of defaultSections) {
+          try {
+            await dispatch(addSection({
+              resumeId: parseInt(resumeId as string),
+              sectionType: section.type
+            })).unwrap();
+            console.log(`Section ${section.type} created`);
+          } catch (err) {
+            console.error(`Failed to create section ${section.type}:`, err);
+          }
+        }
+        
+        // Refresh resume detail to get the newly created sections
+        console.log('Refreshing resume detail to get new sections...');
+        await dispatch(fetchResumeDetail(parseInt(resumeId as string))).unwrap();
+        
+        // Return early - user needs to retry import after sections are created
+        console.log('Sections created. Please try importing again.');
+        alert('Sections have been created. Please import your resume again.');
+        return;
+      }
+
+      // Create section updates based on current resumeDetail structure
+      const sectionsToSave: Section[] = [];
+
+      // Update contact section
+      if (parsedData.contact) {
+        const contactSection = resumeDetail.sections.find(s => s.type === 'contact');
+        if (contactSection) {
+          const updatedSection = {
+            ...contactSection,
+            content: {
+              name: parsedData.contact.name || '',
+              email: parsedData.contact.email || '',
+              phone: parsedData.contact.phone || '',
+              location: parsedData.contact.location || '',
+              address: parsedData.contact.location || '',
+              website: parsedData.contact.website || '',
+              linkedin: parsedData.contact.linkedin || '',
+            }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log('Contact section to save:', updatedSection);
+        }
+      }
+
+      // Update summary section
+      if (parsedData.summary) {
+        const summarySection = resumeDetail.sections.find(s => s.type === 'summary');
+        if (summarySection) {
+          const updatedSection = {
+            ...summarySection,
+            content: { text: parsedData.summary }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log('Summary section to save:', updatedSection);
+        }
+      }
+
+      // Update skills section
+      if (parsedData.skills && parsedData.skills.length > 0) {
+        const skillsSection = resumeDetail.sections.find(s => s.type === 'skills');
+        if (skillsSection) {
+          const updatedSection = {
+            ...skillsSection,
+            content: { skills: parsedData.skills.join(', ') }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log('Skills section to save:', updatedSection);
+        }
+      }
+
+      // Update experience sections
+      if (parsedData.experience && parsedData.experience.length > 0) {
+        const expSections = resumeDetail.sections.filter(s => s.type === 'experience');
+        expSections.slice(0, parsedData.experience.length).forEach((expSection, index) => {
+          const exp = parsedData.experience![index];
+          const updatedSection = {
+            ...expSection,
+            content: {
+              jobTitle: exp.position || '',
+              company: exp.company || '',
+              startDate: exp.startDate || '',
+              endDate: exp.endDate || '',
+              description: exp.description || ''
+            }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log(`Experience section ${index} to save:`, updatedSection);
+        });
+      }
+
+      // Update education sections
+      if (parsedData.education && parsedData.education.length > 0) {
+        const eduSections = resumeDetail.sections.filter(s => s.type === 'education');
+        eduSections.slice(0, parsedData.education.length).forEach((eduSection, index) => {
+          const edu = parsedData.education![index];
+          const updatedSection = {
+            ...eduSection,
+            content: {
+              degree: edu.degree || '',
+              institution: edu.institution || '',
+              fieldOfStudy: edu.field || '',
+              startDate: edu.graduationDate || '',
+              endDate: edu.graduationDate || '',
+              gpa: ''
+            }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log(`Education section ${index} to save:`, updatedSection);
+        });
+      }
+
+      // Update project sections
+      if (parsedData.projects && parsedData.projects.length > 0) {
+        const projSections = resumeDetail.sections.filter(s => s.type === 'projects');
+        projSections.slice(0, parsedData.projects.length).forEach((projSection, index) => {
+          const proj = parsedData.projects![index];
+          const updatedSection = {
+            ...projSection,
+            content: {
+              name: proj.name || '',
+              description: proj.description || '',
+              link: proj.link || ''
+            }
+          };
+          sectionsToSave.push(updatedSection);
+          console.log(`Project section ${index} to save:`, updatedSection);
+        });
+      }
+
+      // Save all sections to backend
+      console.log('Saving', sectionsToSave.length, 'sections to backend...');
+      for (const section of sectionsToSave) {
+        try {
+          await dispatch(updateResumeSection({
+            resumeId: parseInt(resumeId as string),
+            section: section
+          })).unwrap();
+          console.log(`Section ${section.id} (${section.type}) saved successfully`);
+        } catch (err) {
+          console.error(`Failed to save section ${section.id}:`, err);
+        }
+      }
+
+      // Also update Redux state locally for UI
+      dispatch(importResumeData(parsedData));
+      console.log('All sections saved to backend and Redux state updated');
+    } catch (error) {
+      console.error('Error during import:', error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar onLogout={handleLogout} />
@@ -195,6 +402,16 @@ const EditorPage: React.FC = () => {
                 </svg>
                 Back to Dashboard
               </Link>
+              
+              <button
+                onClick={() => setShowImportModal(true)}
+                className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Import Resume
+              </button>
               
               <div className="border-l border-gray-300 pl-6">
                 <UndoRedoToolbar />
@@ -351,6 +568,13 @@ const EditorPage: React.FC = () => {
           </div>
         </div>
       </main>
+
+      {/* Resume Import Modal */}
+      <ResumeImportModal
+        isOpen={showImportModal}
+        onClose={() => setShowImportModal(false)}
+        onImport={handleImportResume}
+      />
     </div>
   );
 };

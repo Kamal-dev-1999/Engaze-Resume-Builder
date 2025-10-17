@@ -222,6 +222,122 @@ const editorSlice = createSlice({
     },
     resetDirtyState: (state) => {
       state.isDirty = false;
+    },
+    importResumeData: (state, action) => {
+      if (!state.resumeDetail?.sections) {
+        console.warn('Cannot import: no resume detail or sections');
+        return;
+      }
+
+      const parsedData = action.payload;
+      console.log('Importing resume data:', parsedData);
+      console.log('Current sections before import:', state.resumeDetail.sections.map(s => ({ id: s.id, type: s.type })));
+
+      // Update contact section if exists
+      if (parsedData.contact) {
+        const contactSection = state.resumeDetail.sections.find((s: Section) => s.type === 'contact');
+        if (contactSection) {
+          console.log('Updating contact section:', contactSection.id, 'with data:', parsedData.contact);
+          // Map parsed contact data to expected structure
+          contactSection.content = {
+            name: parsedData.contact.name || '',
+            email: parsedData.contact.email || '',
+            phone: parsedData.contact.phone || '',
+            location: parsedData.contact.location || '',
+            address: parsedData.contact.location || '',
+            website: parsedData.contact.website || '',
+            linkedin: parsedData.contact.linkedin || '',
+          };
+        }
+      }
+
+      // Update summary section if exists
+      if (parsedData.summary) {
+        const summarySection = state.resumeDetail.sections.find((s: Section) => s.type === 'summary');
+        if (summarySection) {
+          console.log('Updating summary section:', summarySection.id);
+          summarySection.content = {
+            text: parsedData.summary
+          };
+        }
+      }
+
+      // Update skills section if exists (join array into string)
+      if (parsedData.skills && parsedData.skills.length > 0) {
+        const skillsSection = state.resumeDetail.sections.find((s: Section) => s.type === 'skills');
+        if (skillsSection) {
+          console.log('Updating skills section:', skillsSection.id);
+          skillsSection.content = {
+            skills: parsedData.skills.join(', ')
+          };
+        }
+      }
+
+      // Update experience sections - find all experience sections and populate them
+      if (parsedData.experience && parsedData.experience.length > 0) {
+        const expSections = state.resumeDetail.sections.filter((s: Section) => s.type === 'experience');
+        console.log('Found', expSections.length, 'experience sections to fill');
+        
+        expSections.forEach((expSection, index) => {
+          if (index < parsedData.experience.length) {
+            const exp = parsedData.experience[index];
+            console.log(`Updating experience section ${index}:`, expSection.id, 'with:', exp);
+            expSection.content = {
+              jobTitle: exp.position || '',
+              company: exp.company || '',
+              startDate: exp.startDate || '',
+              endDate: exp.endDate || '',
+              description: exp.description || ''
+            };
+          }
+        });
+      }
+
+      // Update education sections - find all education sections and populate them
+      if (parsedData.education && parsedData.education.length > 0) {
+        const eduSections = state.resumeDetail.sections.filter((s: Section) => s.type === 'education');
+        console.log('Found', eduSections.length, 'education sections to fill');
+        
+        eduSections.forEach((eduSection, index) => {
+          if (index < parsedData.education.length) {
+            const edu = parsedData.education[index];
+            console.log(`Updating education section ${index}:`, eduSection.id, 'with:', edu);
+            eduSection.content = {
+              degree: edu.degree || '',
+              institution: edu.institution || '',
+              fieldOfStudy: edu.field || '',
+              startDate: edu.graduationDate || '',
+              endDate: edu.graduationDate || '',
+              gpa: ''
+            };
+          }
+        });
+      }
+
+      // Update projects sections - find all project sections and populate them
+      if (parsedData.projects && parsedData.projects.length > 0) {
+        const projSections = state.resumeDetail.sections.filter((s: Section) => s.type === 'projects');
+        console.log('Found', projSections.length, 'project sections to fill');
+        
+        projSections.forEach((projSection, index) => {
+          if (index < parsedData.projects.length) {
+            const proj = parsedData.projects[index];
+            console.log(`Updating project section ${index}:`, projSection.id, 'with:', proj);
+            projSection.content = {
+              name: proj.name || '',
+              description: proj.description || '',
+              link: proj.link || ''
+            };
+          }
+        });
+      }
+
+      console.log('Import complete, sections after import:', state.resumeDetail.sections.map(s => ({ id: s.id, type: s.type, content: s.content })));
+      state.isDirty = true;
+      // Save to history after import
+      state.history = state.history.slice(0, state.historyIndex + 1);
+      state.history.push(JSON.parse(JSON.stringify(state.resumeDetail)));
+      state.historyIndex = state.history.length - 1;
     }
   },
   extraReducers: (builder) => {
@@ -324,7 +440,8 @@ export const {
   saveToHistory,
   undo,
   redo,
-  resetDirtyState
+  resetDirtyState,
+  importResumeData
 } = editorSlice.actions;
 
 export default editorSlice.reducer;
