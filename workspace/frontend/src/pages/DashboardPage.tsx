@@ -131,12 +131,18 @@ const DashboardPage: React.FC = () => {
             <div className="px-4 py-2 bg-blue-50 text-blue-600 rounded-lg font-semibold border-l-4 border-blue-600">
               Dashboard
             </div>
-            <div className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            <button
+              onClick={() => navigate('/template-gallery')}
+              className="w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition"
+            >
               Template Gallery
-            </div>
-            <div className="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition">
+            </button>
+            <button
+              onClick={() => navigate('/documents')}
+              className="w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg cursor-pointer transition"
+            >
               Documents
-            </div>
+            </button>
           </nav>
         </aside>
 

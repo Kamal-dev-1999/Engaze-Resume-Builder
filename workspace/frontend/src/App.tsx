@@ -13,6 +13,8 @@ import DashboardPage from './pages/DashboardPage';
 import EditorPage from './pages/EditorPage';
 import SharePage from './pages/SharePage';
 import NotFoundPage from './pages/NotFoundPage';
+import TemplateGalleryPage from './pages/TemplateGalleryPage';
+import DocumentsPage from './pages/DocumentsPage';
 
 // Protected route component
 const ProtectedRoute: React.FC<{
@@ -65,6 +67,20 @@ const App: React.FC = () => {
               </div>
             }>
               <DashboardPage />
+            </ErrorBoundary>
+          </ProtectedRoute>
+        } />
+        <Route path="/template-gallery" element={
+          <ProtectedRoute>
+            <ErrorBoundary>
+              <TemplateGalleryPage />
+            </ErrorBoundary>
+          </ProtectedRoute>
+        } />
+        <Route path="/documents" element={
+          <ProtectedRoute>
+            <ErrorBoundary>
+              <DocumentsPage />
             </ErrorBoundary>
           </ProtectedRoute>
         } />
