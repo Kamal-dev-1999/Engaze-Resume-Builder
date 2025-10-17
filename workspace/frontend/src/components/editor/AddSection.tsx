@@ -108,21 +108,19 @@ const AddSection: React.FC<AddSectionProps> = ({ onAdd }) => {
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-xl max-h-72 overflow-hidden flex flex-col border border-gray-200">
-          <div className="flex-1 overflow-y-auto scrollbar-hide">
-            {sectionTypes.map((type) => (
-              <button
-                key={type.id}
-                onClick={() => handleSelect(type.id)}
-                className="w-full text-left flex items-center px-4 py-4 text-sm text-gray-600 bg-white hover:bg-gray-100 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
-              >
-                <span className="flex-shrink-0 mr-4 inline-flex items-center justify-center h-10 w-10 rounded-lg bg-blue-100 text-blue-600">
-                  {renderIcon(type.icon)}
-                </span>
-                <span className="text-gray-600">{type.name}</span>
-              </button>
-            ))}
-          </div>
+        <div className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-xl max-h-72 overflow-y-auto flex flex-col border border-gray-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          {sectionTypes.map((type) => (
+            <button
+              key={type.id}
+              onClick={() => handleSelect(type.id)}
+              className="w-full text-left flex items-center px-4 py-4 text-sm text-gray-600 bg-white hover:bg-gray-100 hover:scale-105 transition-all duration-150 border-b border-gray-100 last:border-b-0 transform"
+            >
+              <span className="flex-shrink-0 mr-4 inline-flex items-center justify-center h-10 w-10 rounded-lg bg-blue-100 text-blue-600">
+                {renderIcon(type.icon)}
+              </span>
+              <span className="text-gray-600">{type.name}</span>
+            </button>
+          ))}
         </div>
       )}
     </div>
