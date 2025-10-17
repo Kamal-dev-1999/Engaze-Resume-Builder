@@ -13,8 +13,7 @@ import {
   addSection,
   deleteSection,
   undo,
-  redo,
-  importResumeData
+  redo
 } from '../redux/slices/editorSlice';
 import SectionList from '../components/editor/SectionList';
 import SectionEditor from '../components/editor/SectionEditor';
@@ -365,21 +364,28 @@ const EditorPage: React.FC = () => {
 
       // Save all sections to backend
       console.log('Saving', sectionsToSave.length, 'sections to backend...');
+      let saveCount = 0;
       for (const section of sectionsToSave) {
         try {
-          await dispatch(updateResumeSection({
+          const result = await dispatch(updateResumeSection({
             resumeId: parseInt(resumeId as string),
             section: section
           })).unwrap();
-          console.log(`Section ${section.id} (${section.type}) saved successfully`);
+          console.log(`Section ${section.id} (${section.type}) saved successfully`, result);
+          saveCount++;
         } catch (err) {
           console.error(`Failed to save section ${section.id}:`, err);
         }
       }
 
-      // Also update Redux state locally for UI
-      dispatch(importResumeData(parsedData));
-      console.log('All sections saved to backend and Redux state updated');
+      console.log(`Successfully saved ${saveCount} out of ${sectionsToSave.length} sections`);
+
+      // Refresh the resume detail to get all the saved sections
+      console.log('Refreshing resume detail after import...');
+      await dispatch(fetchResumeDetail(parseInt(resumeId as string))).unwrap();
+      
+      console.log('All sections saved to backend and resume detail refreshed');
+      alert('Resume imported successfully!');
     } catch (error) {
       console.error('Error during import:', error);
     }
