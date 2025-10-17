@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { useAppDispatch, useAppSelector } from '../utils/hooks';
@@ -20,6 +20,7 @@ import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
 import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
 import MinimalistTemplate from '../components/templates/MinimalistTemplate';
+import DownloadResumeButton from '../components/DownloadResumeButton';
 
 interface Section {
   id: number;
@@ -42,6 +43,9 @@ const EditorPage: React.FC = () => {
   
   // State for the section formatting
   const [formattingSection, setFormattingSection] = useState<Section | null>(null);
+  
+  // State for resume preview ref
+  const resumePreviewRef = useRef<HTMLDivElement>(null);
   
   // Fetch resume details when component mounts
   useEffect(() => {
@@ -161,7 +165,7 @@ const EditorPage: React.FC = () => {
       
       <main className="py-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-8">
+          <div className="mb-8 flex justify-between items-center">
             <Link 
               to="/dashboard" 
               className="flex items-center text-blue-600 hover:text-blue-800"
@@ -171,6 +175,13 @@ const EditorPage: React.FC = () => {
               </svg>
               Back to Dashboard
             </Link>
+            
+            {resumeDetail && (
+              <DownloadResumeButton 
+                resumeTitle={resumeDetail.title}
+                resumeContent={resumePreviewRef}
+              />
+            )}
           </div>
           
           <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -271,7 +282,7 @@ const EditorPage: React.FC = () => {
                       <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Preview</h3>
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                          <div className="aspect-[1/1.4] p-0 shadow-inner flex items-start justify-start overflow-auto bg-gray-50">
+                          <div className="aspect-[1/1.4] p-0 shadow-inner flex items-start justify-start overflow-auto bg-gray-50" ref={resumePreviewRef}>
                             {resumeDetail && resumeDetail.sections ? (
                               <div className="w-full">
                                 {resumeDetail.template_name === 'modern' && (
