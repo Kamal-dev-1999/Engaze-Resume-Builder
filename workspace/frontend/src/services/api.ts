@@ -349,6 +349,25 @@ export const resumeAPI = {
     await api.delete(`resumes/${id}/`);
   },
   
+  deleteSection: async (sectionId: number) => {
+    console.log('API deleteSection called:', { sectionId });
+    try {
+      await api.delete(`sections/${sectionId}/`);
+      console.log('API deleteSection success');
+    } catch (error: any) {
+      console.error('API deleteSection error:', error);
+      const errorMessage = error.response?.data?.detail || 
+                          error.message || 
+                          'Failed to delete section';
+      
+      const enhancedError = new Error(typeof errorMessage === 'object' 
+        ? JSON.stringify(errorMessage)
+        : errorMessage);
+        
+      throw enhancedError;
+    }
+  },
+  
   shareResume: async (id: number) => {
     const response = await api.post(`resumes/${id}/share/`);
     return response.data;

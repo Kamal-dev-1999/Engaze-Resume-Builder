@@ -111,6 +111,23 @@ export const addSection = createAsyncThunk(
   }
 );
 
+export const deleteSection = createAsyncThunk(
+  'editor/deleteSection',
+  async (sectionId: number, { rejectWithValue }) => {
+    try {
+      await resumeAPI.deleteSection(sectionId);
+      return sectionId;
+    } catch (error: any) {
+      console.error('Error deleting section:', error);
+      return rejectWithValue(
+        error.response?.data || 
+        error.message || 
+        'Failed to delete section'
+      );
+    }
+  }
+);
+
 // Editor slice
 const editorSlice = createSlice({
   name: 'editor',
@@ -232,6 +249,25 @@ const editorSlice = createSlice({
       state.isDirty = false;
     });
     builder.addCase(addSection.rejected, (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload as string;
+    });
+    
+    // Delete section cases
+    builder.addCase(deleteSection.pending, (state) => {
+      state.isLoading = true;
+      state.error = null;
+    });
+    builder.addCase(deleteSection.fulfilled, (state, action) => {
+      state.isLoading = false;
+      if (state.resumeDetail?.sections) {
+        state.resumeDetail.sections = state.resumeDetail.sections.filter(
+          section => section.id !== action.payload
+        );
+      }
+      state.isDirty = false;
+    });
+    builder.addCase(deleteSection.rejected, (state, action) => {
       state.isLoading = false;
       state.error = action.payload as string;
     });

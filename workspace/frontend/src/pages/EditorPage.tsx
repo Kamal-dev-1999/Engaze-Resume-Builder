@@ -10,7 +10,8 @@ import {
   reorderSectionsLocally,
   updateResumeSection,
   reorderSections,
-  addSection
+  addSection,
+  deleteSection
 } from '../redux/slices/editorSlice';
 import SectionList from '../components/editor/SectionList';
 import SectionEditor from '../components/editor/SectionEditor';
@@ -70,8 +71,7 @@ const EditorPage: React.FC = () => {
   
   const handleSectionDelete = (sectionId: number) => {
     if (window.confirm('Are you sure you want to delete this section?')) {
-      // Implement section deletion logic here
-      console.log('Delete section:', sectionId);
+      dispatch(deleteSection(sectionId));
     }
   };
   
