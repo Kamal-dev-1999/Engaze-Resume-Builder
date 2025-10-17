@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import type { Section } from '../../types';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface AddSectionProps {
   onAdd: (sectionType: string) => void;
@@ -7,6 +6,22 @@ interface AddSectionProps {
 
 const AddSection: React.FC<AddSectionProps> = ({ onAdd }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isOpen]);
   
   const sectionTypes = [
     { id: 'contact', name: 'Contact Information', icon: 'user' },
@@ -80,31 +95,31 @@ const AddSection: React.FC<AddSectionProps> = ({ onAdd }) => {
   };
 
   return (
-    <div className="relative">
+    <div className="relative" ref={dropdownRef}>
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-center px-4 py-3 border-2 border-dashed border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+        className="w-full flex items-center justify-center px-4 py-3 border-2 border-dashed border-blue-400 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
         </svg>
         Add Section
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 py-1">
-          <div className="py-1 max-h-60 overflow-auto">
+        <div className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-xl max-h-72 overflow-hidden flex flex-col border border-gray-200">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
             {sectionTypes.map((type) => (
               <button
                 key={type.id}
                 onClick={() => handleSelect(type.id)}
-                className="w-full text-left flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="w-full text-left flex items-center px-4 py-4 text-sm text-gray-600 bg-white hover:bg-gray-100 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
               >
-                <span className="flex-shrink-0 mr-3 inline-flex items-center justify-center h-8 w-8 rounded-md bg-blue-50 text-blue-500">
+                <span className="flex-shrink-0 mr-4 inline-flex items-center justify-center h-10 w-10 rounded-lg bg-blue-100 text-blue-600">
                   {renderIcon(type.icon)}
                 </span>
-                {type.name}
+                <span className="text-gray-600">{type.name}</span>
               </button>
             ))}
           </div>

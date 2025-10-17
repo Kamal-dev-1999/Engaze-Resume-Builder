@@ -16,6 +16,10 @@ import SectionList from '../components/editor/SectionList';
 import SectionEditor from '../components/editor/SectionEditor';
 import SectionFormattingPanel from '../components/editor/SectionFormattingPanel';
 import AddSection from '../components/editor/AddSection';
+import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
+import ModernTemplate from '../components/templates/ModernTemplate';
+import CreativeTemplate from '../components/templates/CreativeTemplate';
+import MinimalistTemplate from '../components/templates/MinimalistTemplate';
 
 interface Section {
   id: number;
@@ -267,134 +271,39 @@ const EditorPage: React.FC = () => {
                       <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Preview</h3>
                         <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                          <div className="aspect-[1/1.4] p-8 shadow-inner flex items-center justify-center">
-                            {/* Preview will be implemented based on the template */}
-                            <div className="w-full h-full flex flex-col">
-                              <div className="border-b pb-4 mb-4">
-                                <h1 className="text-2xl font-bold">{resumeDetail.title}</h1>
-                                {resumeDetail.sections?.find(s => s.type === 'contact')?.content && (
-                                  (() => {
-                                    const section = resumeDetail.sections?.find(s => s.type === 'contact');
-                                    if (!section) return null;
-                                    
-                                    const contactSection = section.content;
-                                    const formatting = contactSection.formatting || {};
-                                    
-                                    // Build the contact string from actual content
-                                    const contactDetails = [];
-                                    if (contactSection.email) contactDetails.push(contactSection.email);
-                                    if (contactSection.phone) contactDetails.push(contactSection.phone);
-                                    if (contactSection.address) contactDetails.push(contactSection.address);
-                                    // Support legacy field name "location"
-                                    if (contactSection.location && !contactSection.address) contactDetails.push(contactSection.location);
-                                    
-                                    // Apply formatting styles
-                                    const styles = {
-                                      fontFamily: formatting.fontFamily || 'inherit',
-                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
-                                      fontWeight: formatting.fontWeight || 'inherit',
-                                      textAlign: formatting.textAlign as any || 'inherit',
-                                      color: formatting.textColor || 'inherit',
-                                      backgroundColor: formatting.backgroundColor || 'transparent',
-                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
-                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
-                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
-                                      borderColor: formatting.borderColor || 'transparent',
-                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
-                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
-                                    };
-                                    
-                                    return (
-                                      <div className="mt-2 text-sm" style={styles}>
-                                        <p>{contactDetails.join(' | ')}</p>
-                                      </div>
-                                    );
-                                  })()
+                          <div className="aspect-[1/1.4] p-0 shadow-inner flex items-start justify-start overflow-auto bg-gray-50">
+                            {resumeDetail && resumeDetail.sections ? (
+                              <div className="w-full">
+                                {resumeDetail.template_name === 'modern' && (
+                                  <ModernTemplate 
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {resumeDetail.template_name === 'creative' && (
+                                  <CreativeTemplate 
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {resumeDetail.template_name === 'minimalist' && (
+                                  <MinimalistTemplate 
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {(!resumeDetail.template_name || resumeDetail.template_name === 'professional') && (
+                                  <ProfessionalTemplate 
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
                                 )}
                               </div>
-                              
-                              {/* Summary Section */}
-                              {resumeDetail.sections?.find(s => s.type === 'summary') && (
-                                <div className="mb-4">
-                                  <h2 className="text-lg font-semibold mb-2">Professional Summary</h2>
-                                  {(() => {
-                                    const section = resumeDetail.sections?.find(s => s.type === 'summary');
-                                    if (!section) return null;
-                                    
-                                    const summaryContent = section.content;
-                                    const formatting = summaryContent.formatting || {};
-                                    
-                                    // Apply formatting styles
-                                    const styles = {
-                                      fontFamily: formatting.fontFamily || 'inherit',
-                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
-                                      fontWeight: formatting.fontWeight || 'inherit',
-                                      textAlign: formatting.textAlign as any || 'inherit',
-                                      color: formatting.textColor || 'inherit',
-                                      backgroundColor: formatting.backgroundColor || 'transparent',
-                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
-                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
-                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
-                                      borderColor: formatting.borderColor || 'transparent',
-                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
-                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
-                                    };
-                                    
-                                    return (
-                                      <p className="text-sm" style={styles}>
-                                        {summaryContent.text || 'Your professional summary will appear here.'}
-                                      </p>
-                                    );
-                                  })()}
-                                </div>
-                              )}
-                              
-                              {/* Experience Section */}
-                              {resumeDetail.sections?.some(s => s.type === 'experience') && (
-                                <div className="mb-4">
-                                  <h2 className="text-lg font-semibold mb-2">Work Experience</h2>
-                                  {(() => {
-                                    const section = resumeDetail.sections?.find(s => s.type === 'experience');
-                                    if (!section) return null;
-                                    
-                                    const experienceContent = section.content;
-                                    const formatting = experienceContent.formatting || {};
-                                    
-                                    // Apply formatting styles
-                                    const styles = {
-                                      fontFamily: formatting.fontFamily || 'inherit',
-                                      fontSize: formatting.fontSize ? `${formatting.fontSize}px` : 'inherit',
-                                      fontWeight: formatting.fontWeight || 'inherit',
-                                      textAlign: formatting.textAlign as any || 'inherit',
-                                      color: formatting.textColor || 'inherit',
-                                      backgroundColor: formatting.backgroundColor || 'transparent',
-                                      padding: formatting.padding ? `${formatting.padding}px` : '0',
-                                      margin: formatting.margin ? `${formatting.margin}px` : '0',
-                                      borderWidth: formatting.borderWidth ? `${formatting.borderWidth}px` : '0',
-                                      borderColor: formatting.borderColor || 'transparent',
-                                      borderStyle: formatting.borderWidth ? 'solid' : 'none',
-                                      borderRadius: formatting.borderRadius ? `${formatting.borderRadius}px` : '0',
-                                    };
-                                    
-                                    return (
-                                      <div className="text-sm" style={styles}>
-                                        <p className="font-medium">Job Title</p>
-                                        <p>Company Name | Location</p>
-                                        <p className="text-xs text-gray-600">Start Date - End Date</p>
-                                        <ul className="mt-1 list-disc list-inside">
-                                          <li>Responsibilities and achievements will be shown here.</li>
-                                        </ul>
-                                      </div>
-                                    );
-                                  })()}
-                                </div>
-                              )}
-                              
-                              {/* Other sections would be added here in similar fashion */}
-                              <p className="text-center text-gray-500 mt-auto">
-                                Full resume preview based on template will be implemented
-                              </p>
-                            </div>
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center">
+                                <p className="text-gray-500">Loading resume...</p>
+                              </div>
+                            )}
                           </div>
                         </div>
                       </div>
