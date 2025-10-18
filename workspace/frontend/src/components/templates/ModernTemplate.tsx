@@ -1,4 +1,5 @@
-import React from 'react';
+import React from "react";
+import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
 
 interface Section {
   id: number;
@@ -147,16 +148,39 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
                 </div>
               );
             case 'skills':
+              const skillsByCategory = formatSkillsByCategory(section.content.items || []);
               return (
                 <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
                     <div className="w-1 h-6 bg-blue-500 mr-3"></div>
                     SKILLS
                   </h2>
-                  <div className="flex flex-wrap gap-2">
-                    <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                      {section.content.skills}
-                    </span>
+                  <div className="space-y-3">
+                    {Object.entries(skillsByCategory).length > 0 ? (
+                      Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
+                        <div key={idx}>
+                          <p className="text-sm font-semibold text-blue-300 mb-2">
+                            {getCategoryDisplayName(categoryId)}
+                          </p>
+                          <div className="flex flex-wrap gap-2">
+                            {skillList.map((skill: string, sidx: number) => (
+                              <span
+                                key={sidx}
+                                className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"
+                              >
+                                {skill}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))
+                    ) : typeof section.content.skills === 'string' ? (
+                      <span className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                        {section.content.skills}
+                      </span>
+                    ) : (
+                      <span className="text-gray-500">No skills added</span>
+                    )}
                   </div>
                 </div>
               );

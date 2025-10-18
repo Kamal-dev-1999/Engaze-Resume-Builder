@@ -187,7 +187,7 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
               <p className="text-[13px] text-gray-800 leading-relaxed">
                 {sortedSections
                   .find((s) => s.type === "skills")
-                  ?.content.items.join(" • ")}
+                  ?.content.items.map((skill: any) => typeof skill === 'string' ? skill : skill.name || skill).join(" • ")}
               </p>
             </section>
           )}

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Globe, Linkedin, Upload, X } from 'lucide-react';
+import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
 
 interface Section {
   id: number;
@@ -190,13 +191,36 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
                   );
 
                 case 'skills':
+                  const skillsByCategory = formatSkillsByCategory(section.content.items || []);
                   return (
                     <div key={section.id} className="bg-gray-50 p-4 rounded border" style={getFormattingStyles(section.content?.formatting)}>
                       <h4 className="text-sm font-semibold text-gray-900 mb-3">Skills</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {section.content.skills?.split(',').map((s: string, i: number) => (
-                          <span key={i} className="text-xs px-2 py-1 bg-white border rounded text-gray-700">{s.trim()}</span>
-                        ))}
+                      <div className="space-y-2">
+                        {Object.entries(skillsByCategory).length > 0 ? (
+                          Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
+                            <div key={idx}>
+                              <p className="text-xs font-semibold text-gray-700 mb-1">
+                                {getCategoryDisplayName(categoryId)}
+                              </p>
+                              <div className="flex flex-wrap gap-2">
+                                {skillList.map((skill: string, sidx: number) => (
+                                  <span
+                                    key={sidx}
+                                    className="text-xs px-2 py-1 bg-white border rounded text-gray-700"
+                                  >
+                                    {skill}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        ) : typeof section.content.skills === 'string' ? (
+                          section.content.skills?.split(',').map((s: string, i: number) => (
+                            <span key={i} className="text-xs px-2 py-1 bg-white border rounded text-gray-700">{s.trim()}</span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-500">No skills added</span>
+                        )}
                       </div>
                     </div>
                   );

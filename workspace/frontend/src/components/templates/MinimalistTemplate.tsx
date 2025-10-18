@@ -1,4 +1,5 @@
 import React from 'react';
+import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
 
 interface Section {
   id: number;
@@ -165,14 +166,26 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
                 </div>
               );
             case 'skills':
+              const skillsByCategory = formatSkillsByCategory(section.content.items || []);
               return (
                 <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
                     Skills
                   </h2>
-                  <p className="text-xs text-gray-700 leading-relaxed">
-                    {section.content.skills}
-                  </p>
+                  <div className="text-xs text-gray-700 leading-relaxed space-y-1">
+                    {Object.entries(skillsByCategory).length > 0 ? (
+                      Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
+                        <p key={idx}>
+                          <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                          {skillList.join(", ")}
+                        </p>
+                      ))
+                    ) : typeof section.content.skills === 'string' ? (
+                      <p>{section.content.skills}</p>
+                    ) : (
+                      <p>No skills added</p>
+                    )}
+                  </div>
                   <div className="h-px bg-gray-200 my-6"></div>
                 </div>
               );

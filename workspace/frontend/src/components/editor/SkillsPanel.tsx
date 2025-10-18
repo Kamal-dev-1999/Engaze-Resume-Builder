@@ -125,6 +125,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
         {/* Category Filter */}
         <div className="mb-4 flex flex-wrap gap-2">
           <button
+            type="button"
             onClick={() => setSelectedCategory(null)}
             className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
               selectedCategory === null
@@ -137,6 +138,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
           {allCategories.map(cat => (
             <button
               key={cat.id}
+              type="button"
               onClick={() => setSelectedCategory(cat.id)}
               className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                 selectedCategory === cat.id
@@ -159,6 +161,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
               {filteredSkills.map(skill => (
                 <button
                   key={skill}
+                  type="button"
                   onClick={() => addSkill(skill, PREDEFINED_SKILLS.find(cat => cat.skills.includes(skill))?.id || 'other')}
                   disabled={skills.some(s => s.name === skill)}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -178,6 +181,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
         {/* Custom Skill Input */}
         {!showCustomSkill ? (
           <button
+            type="button"
             onClick={() => setShowCustomSkill(true)}
             className="px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 transition-colors"
           >
@@ -211,6 +215,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                   ))}
                 </select>
                 <button
+                  type="button"
                   onClick={() => setShowNewCategory(true)}
                   className="px-3 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
                 >
@@ -230,12 +235,14 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <button
+                    type="button"
                     onClick={addNewCategory}
                     className="px-3 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
                   >
                     Add
                   </button>
                   <button
+                    type="button"
                     onClick={() => {
                       setShowNewCategory(false);
                       setNewCategoryName('');
@@ -249,6 +256,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
             )}
             <div className="flex gap-2">
               <button
+                type="button"
                 onClick={addCustomSkill}
                 disabled={!customSkillName.trim() || !customSkillCategory.trim()}
                 className="px-4 py-2 bg-green-500 text-white rounded-lg font-medium hover:bg-green-600 disabled:bg-gray-300 transition-colors"
@@ -256,6 +264,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                 Add Skill
               </button>
               <button
+                type="button"
                 onClick={() => {
                   setShowCustomSkill(false);
                   setCustomSkillName('');
@@ -313,6 +322,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                             ))}
                           </select>
                           <button
+                            type="button"
                             onClick={() => {
                               updateProficiency(skill.id, editingProficiency);
                               setEditingSkill(null);
@@ -322,6 +332,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                             Save
                           </button>
                           <button
+                            type="button"
                             onClick={() => setEditingSkill(null)}
                             className="px-2 py-1 bg-gray-300 text-gray-700 rounded text-sm hover:bg-gray-400"
                           >
@@ -336,6 +347,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                             </span>
                           )}
                           <button
+                            type="button"
                             onClick={() => {
                               setEditingSkill(skill.id);
                               setEditingProficiency(skill.proficiency || 'Intermediate');
@@ -345,6 +357,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
                             Edit
                           </button>
                           <button
+                            type="button"
                             onClick={() => removeSkill(skill.id)}
                             className="px-2 py-1 text-red-600 hover:text-red-800 text-sm font-medium"
                           >
@@ -365,6 +378,7 @@ export const SkillsPanel: React.FC<SkillsPanelProps> = ({
       {onClose && (
         <div className="mt-6 pt-4 border-t">
           <button
+            type="button"
             onClick={onClose}
             className="w-full px-4 py-2 bg-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-400 transition-colors"
           >

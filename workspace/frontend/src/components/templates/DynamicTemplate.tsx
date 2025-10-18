@@ -217,7 +217,7 @@ const DynamicTemplate: React.FC<DynamicTemplateProps> = ({
                         key={idx}
                         className="bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-medium border border-teal-200"
                       >
-                        {skill}
+                        {typeof skill === 'string' ? skill : skill.name || skill}
                       </span>
                     ))}
                 </div>
