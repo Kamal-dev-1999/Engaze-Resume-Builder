@@ -1,10 +1,18 @@
 import React, { useState, useEffect } from 'react';
+import { SkillsModal } from './SkillsModal';
 
 interface Section {
   id: number;
   type: string;
   content: any;
   order: number;
+}
+
+interface Skill {
+  id: string;
+  name: string;
+  category: string;
+  proficiency?: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
 }
 
 interface SectionEditorProps {
@@ -16,6 +24,7 @@ interface SectionEditorProps {
 const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel }) => {
   const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [skillsModalOpen, setSkillsModalOpen] = useState(false);
   
   useEffect(() => {
     console.log('SectionEditor useEffect - section:', section);
@@ -426,52 +435,82 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel
       case 'skills':
         return (
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Skills <span className="text-red-500">*</span>
-            </label>
-            <p className="text-xs text-gray-500 mb-2">Enter skills separated by commas</p>
-            <textarea
-              name="skillsText"
-              value={formData.skillsText || formData.items?.join(', ') || ''}
-              onChange={(e) => {
-                const skillsText = e.target.value;
-                const skillsArray = skillsText
-                  .split(',')
-                  .map(skill => skill.trim())
-                  .filter(skill => skill !== '');
-                
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Skills <span className="text-red-500">*</span>
+                </label>
+                <p className="text-xs text-gray-500">Click below to add, search, or organize your skills</p>
+              </div>
+            </div>
+
+            {/* Skills Modal Button */}
+            <button
+              type="button"
+              onClick={() => setSkillsModalOpen(true)}
+              className="mb-4 px-4 py-2 bg-blue-500 text-white rounded-lg font-medium hover:bg-blue-600 transition-colors"
+            >
+              ✎ Manage Skills ({formData.items?.length || 0})
+            </button>
+
+            {/* Display Added Skills */}
+            {formData.items && formData.items.length > 0 && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                  {formData.items.map((skill: Skill, index: number) => (
+                    <div
+                      key={skill.id || index}
+                      className="relative group p-3 bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-lg hover:shadow-md transition-shadow"
+                    >
+                      <p className="font-medium text-gray-900 text-sm">{skill.name}</p>
+                      {skill.proficiency && (
+                        <p className="text-xs text-blue-600 mt-1">{skill.proficiency}</p>
+                      )}
+                      <p className="text-xs text-gray-500 mt-1">{skill.category}</p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setFormData({
+                            ...formData,
+                            items: formData.items.filter((_: Skill, i: number) => i !== index)
+                          });
+                        }}
+                        className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-opacity"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {formData.items && formData.items.length === 0 && (
+              <div className="p-4 bg-gray-50 rounded-lg text-center">
+                <p className="text-gray-500">No skills added yet. Click "Manage Skills" to get started.</p>
+              </div>
+            )}
+
+            {errors.skills && <p className="mt-3 text-sm text-red-500">{errors.skills}</p>}
+
+            {/* Skills Modal */}
+            <SkillsModal
+              isOpen={skillsModalOpen}
+              onClose={() => setSkillsModalOpen(false)}
+              skills={formData.items || []}
+              onSkillsChange={(updatedSkills: Skill[]) => {
                 setFormData({
                   ...formData,
-                  skillsText,
-                  items: skillsArray
+                  items: updatedSkills
                 });
-                
-                // Clear error if skills are added
-                if (skillsArray.length > 0 && errors.skills) {
+                if (errors.skills) {
                   setErrors({
                     ...errors,
                     skills: ''
                   });
                 }
               }}
-              rows={3}
-              className={`w-full px-3 py-2 border ${errors.skills ? 'border-red-500' : 'border-gray-300'} rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500`}
-              placeholder="HTML, CSS, JavaScript, React, Node.js"
             />
-            {errors.skills && <p className="mt-1 text-sm text-red-500">{errors.skills}</p>}
-            
-            {formData.items && formData.items.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-2">
-                {formData.items.map((skill: string, index: number) => (
-                  <span 
-                    key={index} 
-                    className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full"
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
         );
 
