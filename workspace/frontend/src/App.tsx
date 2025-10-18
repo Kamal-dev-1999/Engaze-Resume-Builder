@@ -15,6 +15,7 @@ import SharePage from './pages/SharePage';
 import NotFoundPage from './pages/NotFoundPage';
 import TemplateGalleryPage from './pages/TemplateGalleryPage';
 import DocumentsPage from './pages/DocumentsPage';
+import ProfilePage from './pages/ProfilePage';
 
 // Protected route component
 const ProtectedRoute: React.FC<{
@@ -81,6 +82,13 @@ const App: React.FC = () => {
           <ProtectedRoute>
             <ErrorBoundary>
               <DocumentsPage />
+            </ErrorBoundary>
+          </ProtectedRoute>
+        } />
+        <Route path="/profile" element={
+          <ProtectedRoute>
+            <ErrorBoundary>
+              <ProfilePage />
             </ErrorBoundary>
           </ProtectedRoute>
         } />

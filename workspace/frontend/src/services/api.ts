@@ -120,6 +120,16 @@ export const authAPI = {
     return response.data;
   },
   
+  updateProfile: async (data: { first_name?: string; last_name?: string; email?: string }) => {
+    const response = await api.patch('auth/user/', data);
+    return response.data;
+  },
+  
+  changePassword: async (data: { old_password: string; new_password: string }) => {
+    const response = await api.post('auth/change-password/', data);
+    return response.data;
+  },
+  
   logout: (): void => {
     // We don't need to call an API endpoint for logout as we're using JWT
     // Just remove the tokens from localStorage

@@ -6,6 +6,8 @@ from rest_framework_simplejwt.views import (
 )
 from .views import (
     UserCreateView,
+    UserDetailView,
+    ChangePasswordView,
     ResumeViewSet,
     SectionViewSet,
     StyleViewSet,
@@ -31,6 +33,8 @@ urlpatterns = [
     path('auth/register/', UserCreateView.as_view(), name='register'),
     path('auth/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('auth/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('auth/user/', UserDetailView.as_view(), name='user-detail'),
+    path('auth/change-password/', ChangePasswordView.as_view(), name='change-password'),
     
     # Public resume endpoint
     path('public/resume/<uuid:share_slug>/', PublicResumeView.as_view(), name='public-resume'),

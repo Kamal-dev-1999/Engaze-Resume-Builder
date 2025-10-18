@@ -23,6 +23,61 @@ class UserCreateView(generics.CreateAPIView):
     serializer_class = UserSerializer
     permission_classes = [permissions.AllowAny]
 
+class UserDetailView(generics.RetrieveUpdateAPIView):
+    """View for getting and updating user profile"""
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_object(self):
+        """Return the current authenticated user"""
+        return self.request.user
+    
+    def get_serializer(self, *args, **kwargs):
+        """Override to exclude password field on updates"""
+        serializer_class = self.get_serializer_class()
+        kwargs['partial'] = True
+        return serializer_class(*args, **kwargs)
+
+class ChangePasswordView(generics.GenericAPIView):
+    """View for changing user password"""
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request, *args, **kwargs):
+        """Change password for the authenticated user"""
+        user = request.user
+        old_password = request.data.get('old_password')
+        new_password = request.data.get('new_password')
+        
+        if not old_password or not new_password:
+            return Response(
+                {'detail': 'Both old_password and new_password are required.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Verify old password
+        if not user.check_password(old_password):
+            return Response(
+                {'detail': 'Old password is incorrect.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Validate new password
+        if len(new_password) < 8:
+            return Response(
+                {'detail': 'New password must be at least 8 characters long.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Set new password
+        user.set_password(new_password)
+        user.save()
+        
+        return Response(
+            {'detail': 'Password changed successfully.'},
+            status=status.HTTP_200_OK
+        )
+
 class ResumeViewSet(viewsets.ModelViewSet):
     """ViewSet for Resume model"""
     serializer_class = ResumeSerializer
