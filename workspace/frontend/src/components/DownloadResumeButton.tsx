@@ -37,14 +37,55 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
 
     setIsDownloading(true);
     try {
-      // Capture the resume as an image using html2canvas for accurate styling
-      const canvas = await html2canvas(resumeContent.current, {
+      // Store original inline styles
+      const element = resumeContent.current;
+      const originalStyle = element.getAttribute('style') || '';
+      
+      // Get the parent container (800px height div)
+      const parentContainer = element.parentElement;
+      const originalParentStyle = parentContainer?.getAttribute('style') || '';
+      
+      // Force the element to render at full size for capture
+      // Set explicit width for A4 (210mm = ~794px at 96dpi)
+      element.style.cssText = 'width: 794px !important; height: auto !important; overflow: visible !important; position: static !important;';
+      
+      if (parentContainer) {
+        parentContainer.style.cssText = 'width: 794px !important; height: auto !important; overflow: visible !important;';
+      }
+      
+      // Wait for layout to recalculate
+      await new Promise(resolve => setTimeout(resolve, 200));
+      
+      // Get the actual rendered height
+      const actualHeight = element.scrollHeight;
+      
+      // Capture with explicit dimensions
+      const canvas = await html2canvas(element, {
         scale: 2,
         useCORS: true,
         logging: false,
         backgroundColor: '#ffffff',
-        allowTaint: true
+        allowTaint: true,
+        width: 794,
+        height: actualHeight,
+        windowWidth: 794,
+        windowHeight: actualHeight
       });
+
+      // Restore original styles
+      if (originalStyle) {
+        element.setAttribute('style', originalStyle);
+      } else {
+        element.removeAttribute('style');
+      }
+      
+      if (parentContainer) {
+        if (originalParentStyle) {
+          parentContainer.setAttribute('style', originalParentStyle);
+        } else {
+          parentContainer.removeAttribute('style');
+        }
+      }
 
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
@@ -53,22 +94,22 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
         format: 'a4'
       });
 
-      const imgWidth = 210; // A4 width in mm
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pdfWidth = 210; // A4 width in mm
+      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
       const pageHeight = 297; // A4 height in mm
       
-      let heightLeft = imgHeight;
+      let heightLeft = pdfHeight;
       let position = 0;
 
       // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
       heightLeft -= pageHeight;
 
       // Add additional pages if needed
       while (heightLeft > 0) {
-        position = heightLeft - imgHeight;
+        position = heightLeft - pdfHeight;
         pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
         heightLeft -= pageHeight;
       }
 

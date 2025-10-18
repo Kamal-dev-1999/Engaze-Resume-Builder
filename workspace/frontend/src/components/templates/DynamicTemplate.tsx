@@ -59,7 +59,7 @@ const DynamicTemplate: React.FC<DynamicTemplateProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 text-gray-900 font-['Segoe UI'] leading-relaxed">
+    <div className="w-full h-full bg-gradient-to-br from-slate-50 to-slate-100 text-gray-900 font-['Segoe UI'] leading-relaxed min-h-screen">
       <div className="max-w-[900px] mx-auto">
         {/* Header with Accent */}
         <header className="bg-gradient-to-r from-teal-600 to-teal-700 text-white px-10 py-10 mb-8">

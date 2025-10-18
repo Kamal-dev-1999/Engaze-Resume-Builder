@@ -56,7 +56,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 font-sans">
+    <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 font-sans min-h-screen">
       <div className="max-w-full">
         {sortedSections.map((section) => {
           switch(section.type) {

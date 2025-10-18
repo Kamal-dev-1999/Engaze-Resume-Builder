@@ -585,10 +585,10 @@ const EditorPage: React.FC = () => {
                     <div className="col-span-2">
                       <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Preview</h3>
-                        <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-                          <div className="aspect-[1/1.4] p-0 shadow-inner flex items-start justify-start overflow-auto bg-gray-50" ref={resumePreviewRef}>
+                        <div className="bg-white border border-gray-200 rounded-lg overflow-auto" style={{height: '800px'}}>
+                          <div className="w-full h-full bg-gray-50 p-0" ref={resumePreviewRef}>
                             {resumeDetail && resumeDetail.sections ? (
-                              <div className="w-full">
+                              <div className="w-full h-full">
                                 {resumeDetail.template_name === 'modern' && (
                                   <ModernTemplate 
                                     key={JSON.stringify(resumeDetail.sections)}

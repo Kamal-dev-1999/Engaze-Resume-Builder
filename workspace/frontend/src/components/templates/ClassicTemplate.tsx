@@ -59,7 +59,7 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white text-gray-900 p-12 font-['Georgia'] leading-relaxed">
+    <div className="w-full h-full bg-white text-gray-900 p-12 font-['Georgia'] leading-relaxed min-h-screen">
       <div className="max-w-[850px] mx-auto text-[13px]">
         {/* Header */}
         <header className="text-center mb-8 pb-6 border-b-4 border-gray-800">

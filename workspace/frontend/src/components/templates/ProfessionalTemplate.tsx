@@ -59,7 +59,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white text-gray-900 p-10 font-['Inter'] leading-relaxed tracking-tight">
+    <div className="w-full h-full bg-white text-gray-900 p-10 font-['Inter'] leading-relaxed tracking-tight min-h-screen">
       <div className="max-w-[800px] mx-auto text-[13px]">
         {/* Header - Contact Section */}
         <header className="border-b-2 border-gray-400 pb-4 mb-6 text-center">

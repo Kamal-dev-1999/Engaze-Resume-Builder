@@ -56,7 +56,7 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
   };
 
   return (
-    <div className="w-full h-full bg-white p-8 font-sans">
+    <div className="w-full h-full bg-white p-8 font-sans min-h-screen">
       <div className="max-w-full">
         {sortedSections.map((section) => {
           switch(section.type) {

@@ -59,10 +59,10 @@ const ExecutiveTemplate: React.FC<ExecutiveTemplateProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white text-gray-900 font-['Calibri'] leading-relaxed">
-      <div className="flex h-full">
+    <div className="w-full h-full bg-white text-gray-900 font-['Calibri'] leading-relaxed min-h-screen">
+      <div className="flex h-full min-h-screen">
         {/* Sidebar */}
-        <div className="w-1/3 bg-gray-900 text-white p-8 space-y-8">
+        <div className="w-1/3 bg-gray-900 text-white p-8 space-y-8 min-h-screen">
           {/* Contact Info */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider mb-4 pb-2 border-b border-gray-700">
