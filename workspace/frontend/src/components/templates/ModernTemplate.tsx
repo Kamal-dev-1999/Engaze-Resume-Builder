@@ -16,6 +16,44 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
   // Sort sections by order property to respect custom section ordering
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
 
+  // Helper function to apply formatting styles
+  const getFormattingStyles = (formatting: any = {}) => {
+    const style: React.CSSProperties = {};
+    
+    if (formatting.textColor) {
+      style.color = formatting.textColor;
+    }
+    if (formatting.backgroundColor && formatting.backgroundColor !== 'transparent') {
+      style.backgroundColor = formatting.backgroundColor;
+    }
+    if (formatting.fontFamily) {
+      style.fontFamily = formatting.fontFamily;
+    }
+    if (formatting.fontSize) {
+      style.fontSize = `${formatting.fontSize}px`;
+    }
+    if (formatting.fontWeight) {
+      style.fontWeight = formatting.fontWeight as React.CSSProperties['fontWeight'];
+    }
+    if (formatting.textAlign) {
+      style.textAlign = formatting.textAlign as React.CSSProperties['textAlign'];
+    }
+    if (formatting.padding !== undefined && formatting.padding > 0) {
+      style.padding = `${formatting.padding}px`;
+    }
+    if (formatting.margin !== undefined && formatting.margin > 0) {
+      style.margin = `${formatting.margin}px`;
+    }
+    if (formatting.borderWidth && formatting.borderWidth > 0) {
+      style.border = `${formatting.borderWidth}px solid ${formatting.borderColor || '#d1d5db'}`;
+      if (formatting.borderRadius) {
+        style.borderRadius = `${formatting.borderRadius}px`;
+      }
+    }
+    
+    return style;
+  };
+
   return (
     <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 font-sans">
       <div className="max-w-full">
@@ -23,7 +61,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
           switch(section.type) {
             case 'contact':
               return (
-                <div key={section.id} className="mb-8 pb-8 border-b-2 border-blue-500">
+                <div key={section.id} className="mb-8 pb-8 border-b-2 border-blue-500" style={getFormattingStyles(section.content?.formatting)}>
                   {section.content.name && (
                     <h1 className="text-4xl font-bold mb-2 text-blue-400">{section.content.name}</h1>
                   )}
@@ -56,13 +94,13 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'summary':
               return (
-                <div key={section.id} className="mb-8">
+                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <p className="text-gray-300 leading-relaxed text-sm">{section.content.text}</p>
                 </div>
               );
             case 'experience':
               return (
-                <div key={section.id} className="mb-8">
+                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
                     <div className="w-1 h-6 bg-blue-500 mr-3"></div>
                     WORK EXPERIENCE
@@ -92,7 +130,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'education':
               return (
-                <div key={section.id} className="mb-8">
+                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
                     <div className="w-1 h-6 bg-blue-500 mr-3"></div>
                     EDUCATION
@@ -110,7 +148,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'skills':
               return (
-                <div key={section.id} className="mb-8">
+                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
                     <div className="w-1 h-6 bg-blue-500 mr-3"></div>
                     SKILLS
@@ -124,7 +162,7 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'projects':
               return (
-                <div key={section.id} className="mb-8">
+                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
                     <div className="w-1 h-6 bg-blue-500 mr-3"></div>
                     PROJECTS

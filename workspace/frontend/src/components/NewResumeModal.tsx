@@ -30,6 +30,24 @@ const TEMPLATES = [
     name: 'Minimalist', 
     description: 'Simple and elegant',
     icon: '◽'
+  },
+  { 
+    id: 'executive', 
+    name: 'Executive', 
+    description: 'Sophisticated dark theme',
+    icon: '💼'
+  },
+  { 
+    id: 'classic', 
+    name: 'Classic', 
+    description: 'Traditional serif style',
+    icon: '🎓'
+  },
+  { 
+    id: 'dynamic', 
+    name: 'Dynamic', 
+    description: 'Modern with teal accents',
+    icon: '⚡'
   }
 ];
 

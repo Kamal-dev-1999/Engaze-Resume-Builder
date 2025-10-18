@@ -21,6 +21,44 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
 
   const contact = sortedSections.find(s => s.type === 'contact')?.content || {};
 
+  // Helper function to apply formatting styles
+  const getFormattingStyles = (formatting: any = {}) => {
+    const style: React.CSSProperties = {};
+    
+    if (formatting.textColor) {
+      style.color = formatting.textColor;
+    }
+    if (formatting.backgroundColor && formatting.backgroundColor !== 'transparent') {
+      style.backgroundColor = formatting.backgroundColor;
+    }
+    if (formatting.fontFamily) {
+      style.fontFamily = formatting.fontFamily;
+    }
+    if (formatting.fontSize) {
+      style.fontSize = `${formatting.fontSize}px`;
+    }
+    if (formatting.fontWeight) {
+      style.fontWeight = formatting.fontWeight as React.CSSProperties['fontWeight'];
+    }
+    if (formatting.textAlign) {
+      style.textAlign = formatting.textAlign as React.CSSProperties['textAlign'];
+    }
+    if (formatting.padding !== undefined && formatting.padding > 0) {
+      style.padding = `${formatting.padding}px`;
+    }
+    if (formatting.margin !== undefined && formatting.margin > 0) {
+      style.margin = `${formatting.margin}px`;
+    }
+    if (formatting.borderWidth && formatting.borderWidth > 0) {
+      style.border = `${formatting.borderWidth}px solid ${formatting.borderColor || '#d1d5db'}`;
+      if (formatting.borderRadius) {
+        style.borderRadius = `${formatting.borderRadius}px`;
+      }
+    }
+    
+    return style;
+  };
+
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -100,7 +138,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
               switch(section.type) {
                 case 'experience':
                   return (
-                    <div key={section.id} className="pb-4 border-b">
+                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
                       <h3 className="text-xl font-semibold text-gray-900">{section.content.title}</h3>
                       <div className="flex items-center justify-between text-sm text-gray-600 mt-1">
                         <div>{section.content.company}</div>
@@ -116,7 +154,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
 
                 case 'projects':
                   return (
-                    <div key={section.id} className="pb-4 border-b">
+                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
                       <h3 className="text-lg font-semibold text-gray-900">{section.content.title}</h3>
                       {section.content.date && <div className="text-sm text-gray-600 mt-1">{section.content.date}</div>}
                       {section.content.description && <p className="mt-2 text-sm text-gray-700">{section.content.description}</p>}
@@ -126,7 +164,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
 
                 case 'education':
                   return (
-                    <div key={section.id} className="pb-4 border-b">
+                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
                       <h3 className="text-lg font-semibold text-gray-900">{section.content.degree}</h3>
                       <div className="text-sm text-gray-600">{section.content.institution}{section.content.fieldOfStudy ? ` — ${section.content.fieldOfStudy}` : ''}</div>
                       {section.content.startDate && section.content.endDate && <div className="text-sm text-gray-600 mt-1">{section.content.startDate} – {section.content.endDate}</div>}
@@ -145,7 +183,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
               switch(section.type) {
                 case 'summary':
                   return (
-                    <div key={section.id} className="bg-gray-50 p-4 rounded border">
+                    <div key={section.id} className="bg-gray-50 p-4 rounded border" style={getFormattingStyles(section.content?.formatting)}>
                       <h4 className="text-sm font-semibold text-gray-900 mb-2">Summary</h4>
                       <p className="text-sm text-gray-700">{section.content.text}</p>
                     </div>
@@ -153,7 +191,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
 
                 case 'skills':
                   return (
-                    <div key={section.id} className="bg-gray-50 p-4 rounded border">
+                    <div key={section.id} className="bg-gray-50 p-4 rounded border" style={getFormattingStyles(section.content?.formatting)}>
                       <h4 className="text-sm font-semibold text-gray-900 mb-3">Skills</h4>
                       <div className="flex flex-wrap gap-2">
                         {section.content.skills?.split(',').map((s: string, i: number) => (

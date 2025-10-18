@@ -144,10 +144,20 @@ const editorSlice = createSlice({
       if (state.resumeDetail?.sections) {
         const index = state.resumeDetail.sections.findIndex(s => s.id === action.payload.id);
         if (index !== -1) {
-          state.resumeDetail.sections[index] = {
-            ...state.resumeDetail.sections[index],
-            ...action.payload
+          // Create a new array to ensure React detects the change
+          const oldSection = state.resumeDetail.sections[index];
+          const updatedSection = {
+            id: action.payload.id || oldSection.id,
+            type: action.payload.type || oldSection.type,
+            order: action.payload.order !== undefined ? action.payload.order : oldSection.order,
+            content: action.payload.content || oldSection.content
           };
+          const newSections = [
+            ...state.resumeDetail.sections.slice(0, index),
+            updatedSection,
+            ...state.resumeDetail.sections.slice(index + 1)
+          ];
+          state.resumeDetail.sections = newSections;
           state.isDirty = true;
           // Save to history after update
           state.history = state.history.slice(0, state.historyIndex + 1);
@@ -369,7 +379,13 @@ const editorSlice = createSlice({
       if (state.resumeDetail?.sections) {
         const index = state.resumeDetail.sections.findIndex(s => s.id === action.payload.id);
         if (index !== -1) {
-          state.resumeDetail.sections[index] = action.payload;
+          // Create a new array to trigger React updates
+          const newSections = [
+            ...state.resumeDetail.sections.slice(0, index),
+            action.payload,
+            ...state.resumeDetail.sections.slice(index + 1)
+          ];
+          state.resumeDetail.sections = newSections;
         }
       }
       state.isDirty = false;
@@ -401,7 +417,8 @@ const editorSlice = createSlice({
     builder.addCase(addSection.fulfilled, (state, action) => {
       state.isLoading = false;
       if (state.resumeDetail?.sections) {
-        state.resumeDetail.sections.push(action.payload);
+        // Create a new array to trigger React updates
+        state.resumeDetail.sections = [...state.resumeDetail.sections, action.payload];
       }
       state.isDirty = false;
     });

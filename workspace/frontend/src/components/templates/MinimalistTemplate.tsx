@@ -16,6 +16,44 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
   // Sort sections by order property to respect custom section ordering
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
 
+  // Helper function to apply formatting styles
+  const getFormattingStyles = (formatting: any = {}) => {
+    const style: React.CSSProperties = {};
+    
+    if (formatting.textColor) {
+      style.color = formatting.textColor;
+    }
+    if (formatting.backgroundColor && formatting.backgroundColor !== 'transparent') {
+      style.backgroundColor = formatting.backgroundColor;
+    }
+    if (formatting.fontFamily) {
+      style.fontFamily = formatting.fontFamily;
+    }
+    if (formatting.fontSize) {
+      style.fontSize = `${formatting.fontSize}px`;
+    }
+    if (formatting.fontWeight) {
+      style.fontWeight = formatting.fontWeight as React.CSSProperties['fontWeight'];
+    }
+    if (formatting.textAlign) {
+      style.textAlign = formatting.textAlign as React.CSSProperties['textAlign'];
+    }
+    if (formatting.padding !== undefined && formatting.padding > 0) {
+      style.padding = `${formatting.padding}px`;
+    }
+    if (formatting.margin !== undefined && formatting.margin > 0) {
+      style.margin = `${formatting.margin}px`;
+    }
+    if (formatting.borderWidth && formatting.borderWidth > 0) {
+      style.border = `${formatting.borderWidth}px solid ${formatting.borderColor || '#d1d5db'}`;
+      if (formatting.borderRadius) {
+        style.borderRadius = `${formatting.borderRadius}px`;
+      }
+    }
+    
+    return style;
+  };
+
   return (
     <div className="w-full h-full bg-white p-8 font-sans">
       <div className="max-w-full">
@@ -23,7 +61,7 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
           switch(section.type) {
             case 'contact':
               return (
-                <div key={section.id} className="mb-6">
+                <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   {section.content.name && (
                     <h1 className="text-2xl font-light tracking-widest text-gray-900">{section.content.name}</h1>
                   )}
@@ -69,14 +107,14 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
               );
             case 'summary':
               return (
-                <div key={section.id} className="mb-6">
+                <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   <p className="text-xs leading-relaxed text-gray-700">{section.content.text}</p>
                   <div className="h-px bg-gray-200 mt-6 mb-6"></div>
                 </div>
               );
             case 'experience':
               return (
-                <div key={section.id} className="mb-6">
+                <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
                     Experience
                   </h2>
@@ -108,7 +146,7 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
               );
             case 'education':
               return (
-                <div key={section.id} className="mb-6">
+                <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
                     Education
                   </h2>
@@ -128,7 +166,7 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
               );
             case 'skills':
               return (
-                <div key={section.id} className="mb-6">
+                <div key={section.id} className="mb-6" style={getFormattingStyles(section.content?.formatting)}>
                   <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-3">
                     Skills
                   </h2>

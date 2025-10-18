@@ -47,6 +47,30 @@ const TEMPLATES: Template[] = [
     category: 'Creative',
     color: 'orange',
   },
+  {
+    id: 'executive',
+    name: 'Executive',
+    description: 'Sophisticated dark sidebar design for senior leadership positions',
+    thumbnail: 'bg-gradient-to-br from-gray-900 to-gray-700',
+    category: 'Corporate',
+    color: 'gray',
+  },
+  {
+    id: 'classic',
+    name: 'Classic',
+    description: 'Traditional serif-based formal resume with timeless elegance',
+    thumbnail: 'bg-gradient-to-br from-amber-50 to-amber-100',
+    category: 'Traditional',
+    color: 'amber',
+  },
+  {
+    id: 'dynamic',
+    name: 'Dynamic',
+    description: 'Modern design with teal accents and contemporary styling',
+    thumbnail: 'bg-gradient-to-br from-teal-500 to-teal-600',
+    category: 'Contemporary',
+    color: 'teal',
+  },
 ];
 
 const TemplateGalleryPage: React.FC = () => {

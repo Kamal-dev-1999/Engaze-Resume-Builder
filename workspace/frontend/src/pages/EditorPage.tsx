@@ -25,6 +25,9 @@ import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
 import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
 import MinimalistTemplate from '../components/templates/MinimalistTemplate';
+import ExecutiveTemplate from '../components/templates/ExecutiveTemplate';
+import ClassicTemplate from '../components/templates/ClassicTemplate';
+import DynamicTemplate from '../components/templates/DynamicTemplate';
 import DownloadResumeButton from '../components/DownloadResumeButton';
 import ShareResumeButton from '../components/ShareResumeButton';
 import type { ParsedResume } from '../utils/resumeParser';
@@ -159,17 +162,23 @@ const EditorPage: React.FC = () => {
   
   // Preview formatting changes without saving to server
   const handleFormatPreview = (sectionId: number, formatting: any) => {
+    console.log('handleFormatPreview called with:', { sectionId, formatting });
     if (resumeDetail && resumeDetail.sections) {
       const section = resumeDetail.sections.find(s => s.id === sectionId);
+      console.log('Found section:', section);
       if (section) {
-        // Create a new section with formatting
+        // Create a new section with formatting, preserving all existing fields
         const updatedSection = {
-          ...section,
+          id: section.id,
+          type: section.type,
+          order: section.order,
           content: {
             ...section.content,
             formatting: formatting
           }
         };
+        
+        console.log('Updated section:', updatedSection);
         
         // Update the section locally only (not on the server)
         // Using the same action creator as the save function
@@ -180,17 +189,23 @@ const EditorPage: React.FC = () => {
   };
   
   const handleFormatSave = (sectionId: number, formatting: any) => {
+    console.log('handleFormatSave called with:', { sectionId, formatting });
     if (resumeDetail && resumeDetail.sections) {
       const section = resumeDetail.sections.find(s => s.id === sectionId);
+      console.log('Found section:', section);
       if (section) {
-        // Create a new section with formatting
+        // Create a new section with formatting, preserving all existing fields
         const updatedSection = {
-          ...section,
+          id: section.id,
+          type: section.type,
+          order: section.order,
           content: {
             ...section.content,
             formatting: formatting
           }
         };
+        
+        console.log('Updated section:', updatedSection);
         
         // Update the section locally and on the server
         dispatch(updateSectionLocally(updatedSection));
@@ -590,6 +605,27 @@ const EditorPage: React.FC = () => {
                                 )}
                                 {resumeDetail.template_name === 'minimalist' && (
                                   <MinimalistTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {resumeDetail.template_name === 'executive' && (
+                                  <ExecutiveTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {resumeDetail.template_name === 'classic' && (
+                                  <ClassicTemplate 
+                                    key={JSON.stringify(resumeDetail.sections)}
+                                    resumeTitle={resumeDetail.title}
+                                    sections={resumeDetail.sections}
+                                  />
+                                )}
+                                {resumeDetail.template_name === 'dynamic' && (
+                                  <DynamicTemplate 
                                     key={JSON.stringify(resumeDetail.sections)}
                                     resumeTitle={resumeDetail.title}
                                     sections={resumeDetail.sections}

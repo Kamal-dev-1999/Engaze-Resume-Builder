@@ -37,15 +37,15 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
 
     setIsDownloading(true);
     try {
-      // Capture the resume element as an image using html2canvas
+      // Capture the resume as an image using html2canvas for accurate styling
       const canvas = await html2canvas(resumeContent.current, {
         scale: 2,
         useCORS: true,
         logging: false,
-        backgroundColor: '#ffffff'
+        backgroundColor: '#ffffff',
+        allowTaint: true
       });
 
-      // Create PDF from the canvas
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -55,27 +55,28 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
 
       const imgWidth = 210; // A4 width in mm
       const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      const pageHeight = 297; // A4 height in mm
       
       let heightLeft = imgHeight;
       let position = 0;
 
-      // Handle multi-page PDFs
+      // Add first page
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      // Add additional pages if needed
       while (heightLeft > 0) {
-        const pageHeight = 297; // A4 height in mm
+        position = heightLeft - imgHeight;
+        pdf.addPage();
         pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
         heightLeft -= pageHeight;
-        position -= pageHeight;
-        
-        if (heightLeft > 0) {
-          pdf.addPage();
-        }
       }
 
       pdf.save(`${resumeTitle.replace(/\s+/g, '_')}_resume.pdf`);
       setIsOpen(false);
     } catch (error) {
       console.error('Error generating PDF:', error);
-      alert('Failed to download PDF');
+      alert('Failed to download PDF. Please try again.');
     } finally {
       setIsDownloading(false);
     }
@@ -89,59 +90,76 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
 
     setIsDownloading(true);
     try {
-      // Capture the resume element as an image using html2canvas
-      const canvas = await html2canvas(resumeContent.current, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff'
-      });
+      // Get the HTML content from the resume
+      const htmlContent = resumeContent.current.innerHTML;
 
-      // Convert canvas to image data
-      const imgData = canvas.toDataURL('image/png');
-
-      // Create a Word document with the image
-      const docContent = `
-        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
-              xmlns:w='urn:schemas-microsoft-com:office:word' 
-              xmlns='http://www.w3.org/TR/REC-html40'>
-          <head>
-            <meta charset='UTF-8'>
-            <style>
-              body { 
-                margin: 0; 
-                padding: 20px; 
-                text-align: center;
-              }
-              img {
-                max-width: 100%;
-                height: auto;
-              }
-              @page {
-                margin: 0.5in;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${imgData}" style="max-width: 100%; height: auto;" />
-          </body>
+      // Create a Word-compatible HTML document
+      const wordHTML = `
+        <!DOCTYPE html>
+        <html xmlns:x="urn:schemas-microsoft-com:office:excel"
+              xmlns:o="urn:schemas-microsoft-com:office:office"
+              xmlns:w="urn:schemas-microsoft-com:office:word"
+              xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math"
+              xmlns="http://www.w3.org/TR/REC-html40">
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+          <title>${resumeTitle}</title>
+          <style>
+            * { margin: 0; padding: 0; }
+            body { 
+              font-family: Calibri, Arial, sans-serif;
+              line-height: 1.5;
+              color: #333;
+            }
+            @page { 
+              margin: 0.5in 0.5in 0.5in 0.5in; 
+            }
+            h1, h2, h3, h4, h5, h6 { 
+              margin: 10pt 0 6pt 0;
+              font-weight: bold;
+              line-height: 1.3;
+            }
+            h1 { font-size: 16pt; }
+            h2 { font-size: 14pt; }
+            h3 { font-size: 12pt; }
+            p, div { margin: 0 0 6pt 0; }
+            ul, ol { margin: 0 0 6pt 18pt; }
+            li { margin: 0 0 3pt 0; }
+            strong, b { font-weight: bold; }
+            em, i { font-style: italic; }
+            u { text-decoration: underline; }
+          </style>
+        </head>
+        <body>
+          <div style="margin-bottom: 20pt;">
+            <h1>${resumeTitle}</h1>
+          </div>
+          ${htmlContent}
+        </body>
         </html>
       `;
 
-      const blob = new Blob([docContent], { type: 'application/msword' });
+      // Create a blob with the HTML
+      const blob = new Blob([wordHTML], { type: 'application/msword' });
+      
+      // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       link.download = `${resumeTitle.replace(/\s+/g, '_')}_resume.doc`;
       document.body.appendChild(link);
       link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
+
+      // Cleanup
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+
       setIsOpen(false);
     } catch (error) {
       console.error('Error generating Word document:', error);
-      alert('Failed to download Word document');
+      alert('Failed to download Word document. Please try again.');
     } finally {
       setIsDownloading(false);
     }
