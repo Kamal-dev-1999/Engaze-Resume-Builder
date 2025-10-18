@@ -1,4 +1,5 @@
 import React from "react";
+import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
 
 interface Section {
   id: number;
@@ -210,16 +211,23 @@ const DynamicTemplate: React.FC<DynamicTemplateProps> = ({
                   </h2>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {sortedSections
-                    .find((s) => s.type === "skills")
-                    ?.content.items.map((skill: any, idx: number) => (
-                      <span
-                        key={idx}
-                        className="bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-medium border border-teal-200"
-                      >
-                        {typeof skill === 'string' ? skill : skill.name || skill}
-                      </span>
-                    ))}
+                  {Object.entries(formatSkillsByCategory(sortedSections.find((s) => s.type === "skills")?.content.items || [])).map(([categoryId, skillList], idx) => (
+                    <div key={idx} className="w-full">
+                      <p className="text-xs font-semibold text-teal-700 mb-1">
+                        {getCategoryDisplayName(categoryId)}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {skillList.map((skill: string, sidx: number) => (
+                          <span
+                            key={sidx}
+                            className="bg-teal-50 text-teal-700 px-3 py-1 rounded-full text-sm font-medium border border-teal-200"
+                          >
+                            {skill}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
             )}

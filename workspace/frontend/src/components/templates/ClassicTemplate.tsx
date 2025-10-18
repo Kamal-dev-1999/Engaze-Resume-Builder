@@ -1,4 +1,5 @@
 import React from "react";
+import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
 
 interface Section {
   id: number;
@@ -184,10 +185,13 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
               <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-1 border-b-2 border-gray-800">
                 Core Competencies
               </h2>
-              <p className="text-[13px] text-gray-800 leading-relaxed">
-                {sortedSections
-                  .find((s) => s.type === "skills")
-                  ?.content.items.map((skill: any) => typeof skill === 'string' ? skill : skill.name || skill).join(" • ")}
+              <p className="text-[13px] text-gray-800 leading-relaxed space-y-1">
+                {Object.entries(formatSkillsByCategory(sortedSections.find((s) => s.type === "skills")?.content.items || [])).map(([categoryId, skillList], idx) => (
+                  <span key={idx} className="block">
+                    <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                    {skillList.join(", ")}
+                  </span>
+                ))}
               </p>
             </section>
           )}

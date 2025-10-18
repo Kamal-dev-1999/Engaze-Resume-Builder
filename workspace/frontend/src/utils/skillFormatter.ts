@@ -10,8 +10,7 @@ export interface Skill {
 }
 
 export const formatSkillsByCategory = (
-  skills: any[],
-  categoryNames?: Record<string, string>
+  skills: any[]
 ): Record<string, string[]> => {
   // Handle different skill formats
   if (!skills || !Array.isArray(skills)) {
