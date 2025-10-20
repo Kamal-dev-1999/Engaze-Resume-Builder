@@ -5,6 +5,7 @@ import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
 import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
 import MinimalistTemplate from '../components/templates/MinimalistTemplate';
+import ExecutiveTemplate from '../components/templates/ExecutiveTemplate';
 
 interface SharedResumeData {
   id: number;
@@ -118,6 +119,9 @@ const SharePage: React.FC = () => {
             )}
             {resumeData.template_name === 'minimalist' && (
               <MinimalistTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
+            )}
+            {resumeData.template_name === 'executive' && (
+              <ExecutiveTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />
             )}
             {(!resumeData.template_name || resumeData.template_name === 'professional') && (
               <ProfessionalTemplate sections={resumeData.sections} resumeTitle={resumeData.title} />

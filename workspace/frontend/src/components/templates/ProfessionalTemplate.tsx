@@ -14,6 +14,133 @@ interface ProfessionalTemplateProps {
   sections: Section[];
 }
 
+/**
+ * Helper function to normalize section content into an array.
+ * This ensures the component can render data whether it's stored
+ * as a single object, a correct array, or in mixed formats.
+ */
+const getItemsArray = (content: any): any[] => {
+  if (!content) {
+    return [];
+  }
+
+  // 1. Data is already in the correct array format
+  if (Array.isArray(content.items)) {
+    // BUT check if items is EMPTY and real data exists in flat fields
+    if (content.items.length === 0) {
+      // Check if there's real data in flat fields (education)
+      if (content.degree || content.institution) {
+        return [{
+          degree: content.degree,
+          institution: content.institution,
+          location: content.location,
+          start_date: content.start_date || content.startDate,
+          end_date: content.end_date || content.endDate,
+          fieldOfStudy: content.fieldOfStudy,
+          gpa: content.gpa
+        }];
+      }
+      
+      // Check if there's real data in flat fields (projects) - BEFORE experience
+      // Projects have url/link or technologies signature
+      if (content.url || content.link || content.technologies) {
+        return [{
+          title: content.title || content.name,
+          name: content.name || content.title,
+          description: content.description,
+          link: content.link || content.url,
+          url: content.url || content.link,
+          technologies: content.technologies,
+          start_date: content.start_date,
+          end_date: content.end_date
+        }];
+      }
+      
+      // Check if there's real data in flat fields (experience)
+      if (content.title || content.company) {
+        return [{
+          title: content.title || content.jobTitle,
+          company: content.company,
+          location: content.location,
+          start_date: content.start_date || content.startDate,
+          end_date: content.end_date || content.endDate,
+          description: content.description,
+          jobTitle: content.jobTitle
+        }];
+      }
+      
+      // Items is empty and no flat fields - return empty
+      return [];
+    }
+    
+    // Items array has data - return it
+    return content.items;
+  }
+  
+  // 2. FIX: Handle the specific bug where items is saved as the string "["
+  if (content.items === "[") {
+    return []; // Return an empty array because the data is corrupted
+  }
+
+  // 3. Handle the old format (single object with flat fields)
+  // Check for education fields FIRST (specific check)
+  if (content.degree || content.institution) {
+    return [{
+      degree: content.degree,
+      institution: content.institution,
+      location: content.location,
+      start_date: content.start_date || content.startDate,
+      end_date: content.end_date || content.endDate,
+      fieldOfStudy: content.fieldOfStudy,
+      gpa: content.gpa
+    }];
+  }
+  
+  // Check for project fields (before experience) - projects have url/link + technologies
+  if (content.url || content.link || content.technologies) {
+    return [{
+      title: content.title,
+      name: content.name || content.title,
+      description: content.description,
+      link: content.link || content.url,
+      url: content.url || content.link,
+      technologies: content.technologies,
+      start_date: content.start_date,
+      end_date: content.end_date
+    }];
+  }
+  
+  // Check for project fields with just name
+  if (content.name) {
+    return [{
+      name: content.name || content.title,
+      title: content.title || content.name,
+      description: content.description,
+      link: content.link || content.url,
+      url: content.url || content.link,
+      technologies: content.technologies,
+      start_date: content.start_date,
+      end_date: content.end_date
+    }];
+  }
+  
+  // Check for experience fields
+  if (content.title || content.jobTitle || content.company) {
+    return [{
+      title: content.title || content.jobTitle,
+      jobTitle: content.jobTitle || content.title,
+      company: content.company,
+      location: content.location,
+      start_date: content.start_date || content.startDate,
+      end_date: content.end_date || content.endDate,
+      description: content.description
+    }];
+  }
+  
+  // 4. No recognized pattern - return single item
+  return [content];
+};
+
 const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   resumeTitle,
   sections,
