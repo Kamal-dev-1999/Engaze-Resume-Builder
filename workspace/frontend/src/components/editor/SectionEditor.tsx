@@ -830,7 +830,7 @@ const SectionEditor: React.FC<SectionEditorProps> = ({ section, onSave, onCancel
   }
   
   return (
-    <div className="bg-white p-6 rounded-lg shadow">
+    <div className="bg-white p-6 rounded-lg shadow relative">
       <h3 className="text-lg font-medium text-gray-900 mb-4">
         Edit {section.type.charAt(0).toUpperCase() + section.type.slice(1)} Section
       </h3>

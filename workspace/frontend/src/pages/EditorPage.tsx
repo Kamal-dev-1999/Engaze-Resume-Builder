@@ -454,7 +454,7 @@ const EditorPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-100 overflow-x-hidden">
       <Navbar onLogout={handleLogout} />
       
       <main className="py-10">
@@ -555,7 +555,7 @@ const EditorPage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Editor Controls Panel */}
                     <div className="col-span-1">
-                      <div className="bg-white shadow rounded-lg p-6 sticky top-6">
+                      <div className="bg-white shadow rounded-lg p-6 md:sticky md:top-6 md:max-h-[calc(100vh-40px)] md:overflow-y-auto">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Sections</h3>
                         
                         {editingSection ? (
