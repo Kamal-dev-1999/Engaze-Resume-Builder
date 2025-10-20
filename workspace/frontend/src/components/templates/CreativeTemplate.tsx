@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Phone, MapPin, Globe, Linkedin, Upload, X } from 'lucide-react';
 import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
+import { logTemplateData, detectHardcodedContent, logSectionSorting } from "../../utils/debugLogger";
 
 interface Section {
   id: number;
@@ -19,6 +20,23 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
   
   const [tempPhoto, setTempPhoto] = useState<string | null>(null);
+
+  // Enable debugging by setting this to true
+  const DEBUG_MODE = false;
+
+  // Log template data for debugging
+  React.useEffect(() => {
+    if (DEBUG_MODE) {
+      console.log('%c🎯 CreativeTemplate Loaded', 'color: #0066cc; font-size: 16px; font-weight: bold;');
+      logTemplateData('CreativeTemplate', sections, sortedSections);
+      logSectionSorting(sections, sortedSections);
+      
+      // Check each section for hardcoded content
+      sortedSections.forEach((section) => {
+        detectHardcodedContent(section.type, section.content);
+      });
+    }
+  }, [sections, sortedSections]);
 
   const contact = sortedSections.find(s => s.type === 'contact')?.content || {};
 
@@ -81,14 +99,14 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
   const rightSections = sortedSections.filter(s => rightTypes.includes(s.type));
 
   return (
-    <div className="w-full min-h-screen bg-white text-gray-800 font-sans p-6">
+    <div className="w-full bg-white text-gray-800 font-sans p-3 md:p-4">
       {/* Header - subtle orange band with name + photo */}
       <div className="max-w-5xl mx-auto bg-white shadow-sm">
-        <div className="bg-orange-500 text-white rounded-t-md px-8 py-8 flex items-start justify-between gap-4">
-          <div className="flex-1">
-            {contact.name && <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{contact.name}</h1>}
+        <div className="bg-orange-500 text-white rounded-t-md px-4 md:px-6 py-4 md:py-6 flex flex-col md:flex-row items-start justify-between gap-2 md:gap-4">
+          <div className="flex-1 min-w-0">
+            {contact.name && <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">{contact.name}</h1>}
             {contact.tagline || contact.title ? (
-              <p className="mt-2 text-sm md:text-base opacity-90">{contact.tagline || contact.title}</p>
+              <p className="mt-1 text-xs md:text-sm opacity-90 line-clamp-2">{contact.tagline || contact.title}</p>
             ) : null}
 
             <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-95">
@@ -167,8 +185,17 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
                   return (
                     <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
                       <h3 className="text-lg font-semibold text-gray-900">{section.content.degree}</h3>
-                      <div className="text-sm text-gray-600">{section.content.institution}{section.content.fieldOfStudy ? ` — ${section.content.fieldOfStudy}` : ''}</div>
+                      <div className="text-sm text-gray-600">{section.content.institution}{section.content.location ? ` — ${section.content.location}` : ''}{section.content.fieldOfStudy ? ` • ${section.content.fieldOfStudy}` : ''}</div>
+                      {section.content.start_date && section.content.end_date && <div className="text-sm text-gray-600 mt-1">{section.content.start_date} – {section.content.end_date}</div>}
                       {section.content.startDate && section.content.endDate && <div className="text-sm text-gray-600 mt-1">{section.content.startDate} – {section.content.endDate}</div>}
+                    </div>
+                  );
+
+                case 'custom':
+                  return (
+                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
+                      <h3 className="text-lg font-semibold text-gray-900">{section.content.title || 'Additional Information'}</h3>
+                      <p className="mt-2 text-sm text-gray-700">{section.content.content || section.content.text}</p>
                     </div>
                   );
 

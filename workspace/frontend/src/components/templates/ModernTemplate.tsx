@@ -1,5 +1,6 @@
 import React from "react";
 import { formatSkillsByCategory, getCategoryDisplayName } from "../../utils/skillFormatter";
+import { logTemplateData, detectHardcodedContent, logSectionSorting } from "../../utils/debugLogger";
 
 interface Section {
   id: number;
@@ -16,6 +17,23 @@ interface ModernTemplateProps {
 const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }) => {
   // Sort sections by order property to respect custom section ordering
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);
+
+  // Enable debugging by setting this to true
+  const DEBUG_MODE = false;
+
+  // Log template data for debugging
+  React.useEffect(() => {
+    if (DEBUG_MODE) {
+      console.log('%c🎯 ModernTemplate Loaded', 'color: #0066cc; font-size: 16px; font-weight: bold;');
+      logTemplateData('ModernTemplate', sections, sortedSections);
+      logSectionSorting(sections, sortedSections);
+      
+      // Check each section for hardcoded content
+      sortedSections.forEach((section) => {
+        detectHardcodedContent(section.type, section.content);
+      });
+    }
+  }, [sections, sortedSections]);
 
   // Helper function to apply formatting styles
   const getFormattingStyles = (formatting: any = {}) => {
@@ -56,21 +74,21 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
   };
 
   return (
-    <div className="w-full h-full bg-gradient-to-br from-gray-900 to-gray-800 text-white p-8 font-sans min-h-screen">
+    <div className="w-full bg-gradient-to-br from-gray-900 to-gray-800 text-white p-4 md:p-6 font-sans">
       <div className="max-w-full">
         {sortedSections.map((section) => {
           switch(section.type) {
             case 'contact':
               return (
-                <div key={section.id} className="mb-8 pb-8 border-b-2 border-blue-500" style={getFormattingStyles(section.content?.formatting)}>
+                <div key={section.id} className="mb-4 pb-4 border-b-2 border-blue-500" style={getFormattingStyles(section.content?.formatting)}>
                   {section.content.name && (
-                    <h1 className="text-4xl font-bold mb-2 text-blue-400">{section.content.name}</h1>
+                    <h1 className="text-2xl md:text-3xl font-bold mb-1 text-blue-400">{section.content.name}</h1>
                   )}
                   {section.content.title && (
-                    <p className="text-lg text-gray-300 mb-4">{section.content.title}</p>
+                    <p className="text-sm text-gray-300 mb-2">{section.content.title}</p>
                   )}
                   
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-400">
+                  <div className="flex flex-wrap gap-3 text-xs text-gray-400">
                     {section.content.phone && <span>{section.content.phone}</span>}
                     {section.content.email && (
                       <a href={`mailto:${section.content.email}`} className="text-blue-400 hover:underline">
@@ -95,30 +113,30 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'summary':
               return (
-                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
-                  <p className="text-gray-300 leading-relaxed text-sm">{section.content.text}</p>
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <p className="text-gray-300 leading-tight text-xs">{section.content.text}</p>
                 </div>
               );
             case 'experience':
               return (
-                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
-                    <div className="w-1 h-6 bg-blue-500 mr-3"></div>
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold text-blue-400 mb-2 flex items-center">
+                    <div className="w-1 h-4 bg-blue-500 mr-2"></div>
                     WORK EXPERIENCE
                   </h2>
-                  <div className="space-y-4">
-                    <div className="pl-4 border-l-2 border-blue-500">
-                      <p className="font-bold text-lg text-white">{section.content.title}</p>
-                      <p className="text-blue-400 text-sm font-semibold">{section.content.company}</p>
+                  <div className="space-y-2">
+                    <div className="pl-3 border-l-2 border-blue-500">
+                      <p className="font-bold text-sm text-white">{section.content.title}</p>
+                      <p className="text-blue-400 text-xs font-semibold">{section.content.company}</p>
                       {section.content.startDate && section.content.endDate && (
-                        <p className="text-xs text-gray-500 mb-2">{section.content.startDate} - {section.content.endDate}</p>
+                        <p className="text-xs text-gray-500 mb-1">{section.content.startDate} - {section.content.endDate}</p>
                       )}
                       {section.content.description && (
-                        <ul className="text-sm text-gray-300 space-y-1 mt-2">
+                        <ul className="text-xs text-gray-300 space-y-0.5 mt-1">
                           {section.content.description.split('\n').map((line: string, idx: number) => (
                             line.trim() && (
                               <li key={idx} className="flex items-start">
-                                <span className="text-blue-500 mr-2">▸</span>
+                                <span className="text-blue-500 mr-1">▸</span>
                                 <span>{line.trim()}</span>
                               </li>
                             )
@@ -131,15 +149,21 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'education':
               return (
-                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
-                    <div className="w-1 h-6 bg-blue-500 mr-3"></div>
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold text-blue-400 mb-2 flex items-center">
+                    <div className="w-1 h-4 bg-blue-500 mr-2"></div>
                     EDUCATION
                   </h2>
-                  <div className="space-y-3">
-                    <div className="pl-4">
-                      <p className="font-bold text-white">{section.content.degree}</p>
-                      <p className="text-blue-400 text-sm">{section.content.institution}</p>
+                  <div className="space-y-2">
+                    <div className="pl-3">
+                      <p className="font-bold text-white text-sm">{section.content.degree}</p>
+                      <p className="text-blue-400 text-xs">{section.content.institution}</p>
+                      {section.content.location && (
+                        <p className="text-gray-400 text-xs">{section.content.location}</p>
+                      )}
+                      {section.content.start_date && section.content.end_date && (
+                        <p className="text-xs text-gray-500">{section.content.start_date} - {section.content.end_date}</p>
+                      )}
                       {section.content.startDate && section.content.endDate && (
                         <p className="text-xs text-gray-500">{section.content.startDate} - {section.content.endDate}</p>
                       )}
@@ -150,23 +174,23 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
             case 'skills':
               const skillsByCategory = formatSkillsByCategory(section.content.items || []);
               return (
-                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
-                    <div className="w-1 h-6 bg-blue-500 mr-3"></div>
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold text-blue-400 mb-2 flex items-center">
+                    <div className="w-1 h-4 bg-blue-500 mr-2"></div>
                     SKILLS
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-2">
                     {Object.entries(skillsByCategory).length > 0 ? (
                       Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
                         <div key={idx}>
-                          <p className="text-sm font-semibold text-blue-300 mb-2">
+                          <p className="text-xs font-semibold text-blue-300 mb-1">
                             {getCategoryDisplayName(categoryId)}
                           </p>
-                          <div className="flex flex-wrap gap-2">
+                          <div className="flex flex-wrap gap-1">
                             {skillList.map((skill: string, sidx: number) => (
                               <span
                                 key={sidx}
-                                className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold"
+                                className="bg-blue-500 text-white px-2 py-0.5 rounded-full text-xs font-semibold"
                               >
                                 {skill}
                               </span>
@@ -186,24 +210,36 @@ const ModernTemplate: React.FC<ModernTemplateProps> = ({ resumeTitle, sections }
               );
             case 'projects':
               return (
-                <div key={section.id} className="mb-8" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xl font-bold text-blue-400 mb-4 flex items-center">
-                    <div className="w-1 h-6 bg-blue-500 mr-3"></div>
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold text-blue-400 mb-2 flex items-center">
+                    <div className="w-1 h-4 bg-blue-500 mr-2"></div>
                     PROJECTS
                   </h2>
-                  <div className="space-y-4">
-                    <div className="pl-4 border-l-2 border-blue-500">
-                      <p className="font-bold text-lg text-white">
-                        {section.content.title}
+                  <div className="space-y-2">
+                    <div className="pl-3 border-l-2 border-blue-500">
+                      <p className="font-bold text-xs text-white">
+                        {section.content.title || section.content.name}
                         {section.content.link && (
-                          <> • <a href={section.content.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-sm">{section.content.linkText || 'Link'}</a></>
+                          <> • <a href={section.content.link} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline text-xs">{section.content.linkText || 'Link'}</a></>
                         )}
                       </p>
                       {section.content.description && (
-                        <p className="text-sm text-gray-300 mt-1">{section.content.description}</p>
+                        <p className="text-xs text-gray-300 mt-0.5">{section.content.description}</p>
                       )}
                     </div>
                   </div>
+                </div>
+              );
+            case 'custom':
+              return (
+                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold text-blue-400 mb-2 flex items-center">
+                    <div className="w-1 h-4 bg-blue-500 mr-2"></div>
+                    {section.content.title || 'ADDITIONAL INFO'}
+                  </h2>
+                  <p className="text-xs text-gray-300 leading-tight">
+                    {section.content.content || section.content.text}
+                  </p>
                 </div>
               );
             default:

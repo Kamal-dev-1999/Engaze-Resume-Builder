@@ -21,6 +21,7 @@ import SectionFormattingPanel from '../components/editor/SectionFormattingPanel'
 import AddSection from '../components/editor/AddSection';
 import UndoRedoToolbar from '../components/editor/UndoRedoToolbar';
 import ResumeImportModal from '../components/editor/ResumeImportModal';
+import ResumePages from '../components/ResumePages';
 import ProfessionalTemplate from '../components/templates/ProfessionalTemplate';
 import ModernTemplate from '../components/templates/ModernTemplate';
 import CreativeTemplate from '../components/templates/CreativeTemplate';
@@ -343,7 +344,7 @@ const EditorPage: React.FC = () => {
         if (skillsSection) {
           const updatedSection = {
             ...skillsSection,
-            content: { skills: parsedData.skills.join(', ') }
+            content: { items: parsedData.skills }
           };
           sectionsToSave.push(updatedSection);
           console.log('Skills section to save:', updatedSection);
@@ -358,11 +359,16 @@ const EditorPage: React.FC = () => {
           const updatedSection = {
             ...expSection,
             content: {
-              jobTitle: exp.position || '',
-              company: exp.company || '',
-              startDate: exp.startDate || '',
-              endDate: exp.endDate || '',
-              description: exp.description || ''
+              items: [
+                {
+                  title: exp.position || '',
+                  company: exp.company || '',
+                  start_date: exp.startDate || '',
+                  end_date: exp.endDate || '',
+                  location: '',
+                  description: exp.description || ''
+                }
+              ]
             }
           };
           sectionsToSave.push(updatedSection);
@@ -378,12 +384,16 @@ const EditorPage: React.FC = () => {
           const updatedSection = {
             ...eduSection,
             content: {
-              degree: edu.degree || '',
-              institution: edu.institution || '',
-              fieldOfStudy: edu.field || '',
-              startDate: edu.graduationDate || '',
-              endDate: edu.graduationDate || '',
-              gpa: ''
+              items: [
+                {
+                  degree: edu.degree || '',
+                  institution: edu.institution || '',
+                  location: '',
+                  start_date: edu.graduationDate || '',
+                  end_date: edu.graduationDate || '',
+                  fieldOfStudy: edu.field || ''
+                }
+              ]
             }
           };
           sectionsToSave.push(updatedSection);
@@ -399,9 +409,14 @@ const EditorPage: React.FC = () => {
           const updatedSection = {
             ...projSection,
             content: {
-              name: proj.name || '',
-              description: proj.description || '',
-              link: proj.link || ''
+              items: [
+                {
+                  name: proj.name || '',
+                  title: proj.name || '',
+                  description: proj.description || '',
+                  link: proj.link || ''
+                }
+              ]
             }
           };
           sectionsToSave.push(updatedSection);
@@ -585,10 +600,12 @@ const EditorPage: React.FC = () => {
                     <div className="col-span-2">
                       <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Preview</h3>
-                        <div className="bg-white border border-gray-200 rounded-lg overflow-auto" style={{height: '800px'}}>
-                          <div className="w-full h-full bg-gray-50 p-0" ref={resumePreviewRef}>
+                        <ResumePages onPageCountChange={(pageCount) => {
+                          console.log(`Resume has ${pageCount} pages`);
+                        }}>
+                          <div className="w-full bg-white" ref={resumePreviewRef}>
                             {resumeDetail && resumeDetail.sections ? (
-                              <div className="w-full h-full">
+                              <>
                                 {resumeDetail.template_name === 'modern' && (
                                   <ModernTemplate 
                                     key={JSON.stringify(resumeDetail.sections)}
@@ -638,14 +655,14 @@ const EditorPage: React.FC = () => {
                                     sections={resumeDetail.sections}
                                   />
                                 )}
-                              </div>
+                              </>
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center">
+                              <div className="w-full flex items-center justify-center p-8">
                                 <p className="text-gray-500">Loading resume...</p>
                               </div>
                             )}
                           </div>
-                        </div>
+                        </ResumePages>
                       </div>
                     </div>
                   </div>

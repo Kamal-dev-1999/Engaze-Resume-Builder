@@ -145,12 +145,10 @@ const editorSlice = createSlice({
         const index = state.resumeDetail.sections.findIndex(s => s.id === action.payload.id);
         if (index !== -1) {
           // Create a new array to ensure React detects the change
-          const oldSection = state.resumeDetail.sections[index];
+          // Merge payload with existing section, keeping all properties from payload
           const updatedSection = {
-            id: action.payload.id || oldSection.id,
-            type: action.payload.type || oldSection.type,
-            order: action.payload.order !== undefined ? action.payload.order : oldSection.order,
-            content: action.payload.content || oldSection.content
+            ...state.resumeDetail.sections[index],
+            ...action.payload
           };
           const newSections = [
             ...state.resumeDetail.sections.slice(0, index),
@@ -272,13 +270,13 @@ const editorSlice = createSlice({
         }
       }
 
-      // Update skills section if exists (join array into string)
+      // Update skills section if exists
       if (parsedData.skills && parsedData.skills.length > 0) {
         const skillsSection = state.resumeDetail.sections.find((s: Section) => s.type === 'skills');
         if (skillsSection) {
           console.log('Updating skills section:', skillsSection.id);
           skillsSection.content = {
-            skills: parsedData.skills.join(', ')
+            items: parsedData.skills
           };
         }
       }
@@ -293,11 +291,16 @@ const editorSlice = createSlice({
             const exp = parsedData.experience[index];
             console.log(`Updating experience section ${index}:`, expSection.id, 'with:', exp);
             expSection.content = {
-              jobTitle: exp.position || '',
-              company: exp.company || '',
-              startDate: exp.startDate || '',
-              endDate: exp.endDate || '',
-              description: exp.description || ''
+              items: [
+                {
+                  title: exp.position || '',
+                  company: exp.company || '',
+                  start_date: exp.startDate || '',
+                  end_date: exp.endDate || '',
+                  location: '',
+                  description: exp.description || ''
+                }
+              ]
             };
           }
         });
@@ -313,12 +316,16 @@ const editorSlice = createSlice({
             const edu = parsedData.education[index];
             console.log(`Updating education section ${index}:`, eduSection.id, 'with:', edu);
             eduSection.content = {
-              degree: edu.degree || '',
-              institution: edu.institution || '',
-              fieldOfStudy: edu.field || '',
-              startDate: edu.graduationDate || '',
-              endDate: edu.graduationDate || '',
-              gpa: ''
+              items: [
+                {
+                  degree: edu.degree || '',
+                  institution: edu.institution || '',
+                  location: '',
+                  start_date: edu.graduationDate || '',
+                  end_date: edu.graduationDate || '',
+                  fieldOfStudy: edu.field || ''
+                }
+              ]
             };
           }
         });
@@ -334,9 +341,14 @@ const editorSlice = createSlice({
             const proj = parsedData.projects[index];
             console.log(`Updating project section ${index}:`, projSection.id, 'with:', proj);
             projSection.content = {
-              name: proj.name || '',
-              description: proj.description || '',
-              link: proj.link || ''
+              items: [
+                {
+                  name: proj.name || '',
+                  title: proj.name || '',
+                  description: proj.description || '',
+                  link: proj.link || ''
+                }
+              ]
             };
           }
         });

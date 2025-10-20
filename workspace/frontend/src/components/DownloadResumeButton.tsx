@@ -1,7 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
 import type { RefObject } from 'react';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
+// html2canvas is required by html2pdf.js internally
+import html2canvas from 'html2canvas'; // eslint-disable-line @typescript-eslint/no-unused-vars
+import html2pdf from 'html2pdf.js';
+
+// Make html2canvas available globally for html2pdf
+if (typeof window !== 'undefined') {
+  (window as any).html2canvas = html2canvas;
+}
 
 interface DownloadResumeButtonProps {
   resumeTitle: string;
@@ -37,83 +43,31 @@ const DownloadResumeButton: React.FC<DownloadResumeButtonProps> = ({ resumeTitle
 
     setIsDownloading(true);
     try {
-      // Store original inline styles
-      const element = resumeContent.current;
-      const originalStyle = element.getAttribute('style') || '';
+      // Clone the element to avoid modifying the original
+      const element = resumeContent.current.cloneNode(true) as HTMLElement;
       
-      // Get the parent container (800px height div)
-      const parentContainer = element.parentElement;
-      const originalParentStyle = parentContainer?.getAttribute('style') || '';
-      
-      // Force the element to render at full size for capture
-      // Set explicit width for A4 (210mm = ~794px at 96dpi)
-      element.style.cssText = 'width: 794px !important; height: auto !important; overflow: visible !important; position: static !important;';
-      
-      if (parentContainer) {
-        parentContainer.style.cssText = 'width: 794px !important; height: auto !important; overflow: visible !important;';
-      }
-      
-      // Wait for layout to recalculate
-      await new Promise(resolve => setTimeout(resolve, 200));
-      
-      // Get the actual rendered height
-      const actualHeight = element.scrollHeight;
-      
-      // Capture with explicit dimensions
-      const canvas = await html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        logging: false,
-        backgroundColor: '#ffffff',
-        allowTaint: true,
-        width: 794,
-        height: actualHeight,
-        windowWidth: 794,
-        windowHeight: actualHeight
-      });
+      // Create a temporary container
+      const container = document.createElement('div');
+      container.style.position = 'absolute';
+      container.style.left = '-9999px';
+      container.style.width = '210mm'; // A4 width
+      container.appendChild(element);
+      document.body.appendChild(container);
 
-      // Restore original styles
-      if (originalStyle) {
-        element.setAttribute('style', originalStyle);
-      } else {
-        element.removeAttribute('style');
-      }
-      
-      if (parentContainer) {
-        if (originalParentStyle) {
-          parentContainer.setAttribute('style', originalParentStyle);
-        } else {
-          parentContainer.removeAttribute('style');
-        }
-      }
+      // Configure html2pdf options
+      const opt = {
+        margin: 0,
+        filename: `${resumeTitle.replace(/\s+/g, '_')}_resume.pdf`,
+        image: { type: 'jpeg' as const, quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { format: 'a4', orientation: 'portrait' as const }
+      };
 
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF({
-        orientation: 'portrait',
-        unit: 'mm',
-        format: 'a4'
-      });
+      // Generate PDF from HTML while preserving text
+      await html2pdf().set(opt).from(element).save();
 
-      const pdfWidth = 210; // A4 width in mm
-      const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-      const pageHeight = 297; // A4 height in mm
-      
-      let heightLeft = pdfHeight;
-      let position = 0;
-
-      // Add first page
-      pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-      heightLeft -= pageHeight;
-
-      // Add additional pages if needed
-      while (heightLeft > 0) {
-        position = heightLeft - pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, pdfHeight);
-        heightLeft -= pageHeight;
-      }
-
-      pdf.save(`${resumeTitle.replace(/\s+/g, '_')}_resume.pdf`);
+      // Cleanup
+      document.body.removeChild(container);
       setIsOpen(false);
     } catch (error) {
       console.error('Error generating PDF:', error);

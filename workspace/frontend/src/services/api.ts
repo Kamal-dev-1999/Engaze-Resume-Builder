@@ -250,9 +250,50 @@ export const resumeAPI = {
   addSection: async (resumeId: number, sectionType: string) => {
     console.log('API addSection called:', { resumeId, sectionType });
     try {
-      // Try to call the real API endpoint
+      // Prepare empty content structure based on section type
+      const contentStructure: any = { type: sectionType };
+      
+      switch (sectionType) {
+        case 'contact':
+          contentStructure.content = {
+            email: '',
+            phone: '',
+            address: '',
+            name: '',
+            title: '',
+            linkedin: '',
+            website: '',
+            location: ''
+          };
+          break;
+        case 'summary':
+          contentStructure.content = { text: '' };
+          break;
+        case 'experience':
+          contentStructure.content = { items: [] };
+          break;
+        case 'education':
+          contentStructure.content = { items: [] };
+          break;
+        case 'skills':
+          contentStructure.content = { items: [] };
+          break;
+        case 'projects':
+          contentStructure.content = { items: [] };
+          break;
+        case 'languages':
+          contentStructure.content = { items: [] };
+          break;
+        case 'custom':
+          contentStructure.content = { title: '', content: '', text: '' };
+          break;
+        default:
+          contentStructure.content = {};
+      }
+      
+      // Try to call the real API endpoint with content
       try {
-        const response = await api.post(`resumes/${resumeId}/sections/`, { type: sectionType });
+        const response = await api.post(`resumes/${resumeId}/sections/`, contentStructure);
         console.log('API addSection success response:', response.data);
         return response.data;
       } catch (apiError: any) {
@@ -276,42 +317,55 @@ export const resumeAPI = {
           content: {} // Empty content to be filled in later
         };
         
-        // For different section types, provide different default content
+        // For different section types, provide empty default content (NOT placeholders)
         switch (sectionType) {
           case 'contact':
             mockSection.content = {
-              email: 'email@example.com',
-              phone: '123-456-7890',
-              address: 'City, State'
+              email: '',
+              phone: '',
+              address: '',
+              name: '',
+              title: '',
+              linkedin: '',
+              website: '',
+              location: ''
             };
             break;
           case 'summary':
             mockSection.content = {
-              text: 'Your professional summary goes here.'
+              text: ''
             };
             break;
           case 'experience':
             mockSection.content = {
-              title: 'Job Title',
-              company: 'Company Name',
-              location: 'City, State',
-              start_date: '',
-              end_date: '',
-              description: 'Job description and achievements'
+              items: []
             };
             break;
           case 'education':
             mockSection.content = {
-              degree: 'Degree Name',
-              institution: 'Institution Name',
-              location: 'City, State',
-              start_date: '',
-              end_date: ''
+              items: []
             };
             break;
           case 'skills':
             mockSection.content = {
-              items: ['Skill 1', 'Skill 2', 'Skill 3']
+              items: []
+            };
+            break;
+          case 'projects':
+            mockSection.content = {
+              items: []
+            };
+            break;
+          case 'languages':
+            mockSection.content = {
+              items: []
+            };
+            break;
+          case 'custom':
+            mockSection.content = {
+              title: '',
+              content: '',
+              text: ''
             };
             break;
         }

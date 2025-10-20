@@ -126,11 +126,22 @@ class SectionViewSet(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         """Create a new section with detailed error reporting and auto-fill defaults"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         resume_id = self.kwargs.get('resume_pk')
         resume = get_object_or_404(Resume, pk=resume_id, user=self.request.user)
         
         # Copy request data to add missing fields
         data = request.data.copy()
+        
+        # DEBUG: Log the incoming request data
+        logger.info(f"🔍 CREATE SECTION - Resume ID: {resume_id}")
+        logger.info(f"🔍 REQUEST DATA RECEIVED: {dict(request.data)}")
+        logger.info(f"🔍 Section Type: {data.get('type')}")
+        logger.info(f"🔍 Has Content: {'content' in data}")
+        if 'content' in data:
+            logger.info(f"🔍 Content Value: {data.get('content')}")
         
         # Get the highest order value for existing sections to place new section at the end
         highest_order = Section.objects.filter(resume=resume).order_by('-order').values_list('order', flat=True).first()
@@ -152,59 +163,40 @@ class SectionViewSet(viewsets.ModelViewSet):
             
             if section_type == 'contact':
                 default_content = {
-                    'email': 'email@example.com',
-                    'phone': '123-456-7890',
-                    'address': 'City, State',
-                    'name': 'Your Name',
-                    'title': 'Your Job Title'
+                    'email': '',
+                    'phone': '',
+                    'address': '',
+                    'name': '',
+                    'title': '',
+                    'linkedin': '',
+                    'website': '',
+                    'location': ''
                 }
             elif section_type == 'summary':
                 default_content = {
-                    'text': 'Your professional summary goes here.'
+                    'text': ''
                 }
             elif section_type == 'experience':
                 default_content = {
-                    'items': [
-                        {
-                            'title': 'Job Title',
-                            'company': 'Company Name',
-                            'location': 'City, State',
-                            'start_date': '',
-                            'end_date': '',
-                            'description': 'Job description and achievements'
-                        }
-                    ]
+                    'items': []
                 }
             elif section_type == 'education':
                 default_content = {
-                    'items': [
-                        {
-                            'degree': 'Degree Name',
-                            'institution': 'Institution Name',
-                            'location': 'City, State',
-                            'start_date': '',
-                            'end_date': ''
-                        }
-                    ]
+                    'items': []
                 }
             elif section_type == 'skills':
                 default_content = {
-                    'items': ['Skill 1', 'Skill 2', 'Skill 3']
+                    'items': []
                 }
             elif section_type == 'projects':
                 default_content = {
-                    'items': [
-                        {
-                            'title': 'Project Name',
-                            'description': 'Project description',
-                            'technologies': ['Tech 1', 'Tech 2']
-                        }
-                    ]
+                    'items': []
                 }
             elif section_type == 'custom':
                 default_content = {
-                    'title': 'Custom Section',
-                    'items': ['Item 1', 'Item 2', 'Item 3']
+                    'title': '',
+                    'content': '',
+                    'text': ''
                 }
                 
             # Add default content to data
@@ -224,20 +216,45 @@ class SectionViewSet(viewsets.ModelViewSet):
         
         # Save with the resume instance
         section = serializer.save(resume=resume)
-        logger.info(f"Created section: {section.id} for resume: {resume.id}")
+        logger.info(f"✅ Created section: {section.id} for resume: {resume.id}")
+        logger.info(f"✅ Section Type: {section.type}")
+        logger.info(f"✅ Section Content Saved: {section.content}")
         
         return Response(serializer.data, status=status.HTTP_201_CREATED)
             
     def update(self, request, *args, **kwargs):
         """Update a section with detailed error reporting"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        # DEBUG: Log the incoming update data
+        section_id = kwargs.get('pk')
+        print(f"\n{'='*80}")
+        print(f"🔍 UPDATE SECTION - Section ID: {section_id}")
+        print(f"🔍 REQUEST DATA RECEIVED: {dict(request.data)}")
+        print(f"🔍 Has Content: {'content' in request.data}")
+        if 'content' in request.data:
+            content = request.data.get('content')
+            print(f"🔍 Content Value: {content}")
+            print(f"🔍 Content Type: {type(content)}")
+            print(f"🔍 Content Length: {len(str(content))}")
+        print(f"🔍 Type Field: {request.data.get('type')}")
+        print(f"🔍 Order Field: {request.data.get('order')}")
+        print(f"{'='*80}\n")
+        
+        logger.info(f"🔍 UPDATE SECTION - Section ID: {section_id}")
+        logger.info(f"🔍 REQUEST DATA: {dict(request.data)}")
+        logger.info(f"🔍 Has Content: {'content' in request.data}")
+        if 'content' in request.data:
+            logger.info(f"🔍 Content Value: {request.data.get('content')}")
+        logger.info(f"🔍 Type Field: {request.data.get('type')}")
+        
         partial = kwargs.pop('partial', False)
         
         try:
             instance = self.get_object()
         except:
             # Log the error for debugging
-            import logging
-            logger = logging.getLogger(__name__)
             logger.error(f"Section not found: {kwargs.get('pk')}")
             return Response({"detail": "Section not found"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -256,6 +273,20 @@ class SectionViewSet(viewsets.ModelViewSet):
             )
             
         self.perform_update(serializer)
+        
+        # DEBUG: Log the updated section
+        updated_section = serializer.instance
+        print(f"\n{'='*80}")
+        print(f"✅ SECTION UPDATED:")
+        print(f"   Section ID: {updated_section.id}")
+        print(f"   Type: {updated_section.type}")
+        print(f"   Order: {updated_section.order}")
+        print(f"   Content Saved: {updated_section.content}")
+        print(f"{'='*80}\n")
+        
+        logger.info(f"✅ Updated section: {updated_section.id}")
+        logger.info(f"✅ Section Type: {updated_section.type}")
+        logger.info(f"✅ Section Content After Update: {updated_section.content}")
         
         return Response(serializer.data)
 

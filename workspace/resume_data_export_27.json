@@ -1,0 +1,152 @@
+{
+  "resume_id": 27,
+  "sections": [
+    {
+      "id": 68,
+      "type": "contact",
+      "content": {
+        "email": "email@example.com",
+        "phone": "123-456-7890",
+        "address": "City, State",
+        "name": "Your Name",
+        "title": "Your Job Title"
+      },
+      "order": 1
+    },
+    {
+      "id": 69,
+      "type": "summary",
+      "content": {
+        "text": "Your professional summary goes here."
+      },
+      "order": 2
+    },
+    {
+      "id": 70,
+      "type": "experience",
+      "content": {
+        "items": [
+          {
+            "title": "Job Title",
+            "company": "Company Name",
+            "location": "City, State",
+            "start_date": "",
+            "end_date": "",
+            "description": "Job description and achievements"
+          }
+        ]
+      },
+      "order": 3
+    },
+    {
+      "id": 71,
+      "type": "education",
+      "content": {
+        "items": [
+          {
+            "degree": "Degree Name",
+            "institution": "Institution Name",
+            "location": "City, State",
+            "start_date": "",
+            "end_date": ""
+          }
+        ]
+      },
+      "order": 4
+    },
+    {
+      "id": 73,
+      "type": "projects",
+      "content": {
+        "items": [
+          {
+            "title": "Project Name",
+            "description": "Project description",
+            "technologies": [
+              "Tech 1",
+              "Tech 2"
+            ]
+          }
+        ]
+      },
+      "order": 6
+    },
+    {
+      "id": 74,
+      "type": "education",
+      "content": {
+        "items": [
+          {
+            "degree": "Degree Name",
+            "institution": "Institution Name",
+            "location": "City, State",
+            "start_date": "",
+            "end_date": ""
+          }
+        ]
+      },
+      "order": 7
+    },
+    {
+      "id": 75,
+      "type": "skills",
+      "content": {
+        "items": [
+          "Skill 1",
+          "Skill 2",
+          "Skill 3"
+        ],
+        "formatting": {
+          "fontFamily": "Arial",
+          "fontSize": 14,
+          "fontWeight": "normal",
+          "textAlign": "left",
+          "textColor": "#000000",
+          "backgroundColor": "transparent",
+          "padding": 8,
+          "margin": 0,
+          "borderWidth": 0,
+          "borderColor": "#d1d5db",
+          "borderRadius": 4
+        }
+      },
+      "order": 8
+    },
+    {
+      "id": 81,
+      "type": "projects",
+      "content": {
+        "items": [
+          {
+            "title": "Project Name",
+            "description": "Project description",
+            "technologies": [
+              "Tech 1",
+              "Tech 2"
+            ]
+          }
+        ],
+        "url": "https://codolio.com/profile/kamal-7361",
+        "title": "sdvsbsbf",
+        "start_date": "2025-10-14",
+        "end_date": "2025-10-15",
+        "description": "sbsbsbsbs",
+        "technologies": "sbsbfsbf"
+      },
+      "order": 9
+    },
+    {
+      "id": 82,
+      "type": "custom",
+      "content": {
+        "title": "Custom Section",
+        "items": [
+          "Item 1",
+          "Item 2",
+          "Item 3"
+        ]
+      },
+      "order": 10
+    }
+  ]
+}
