@@ -1,9 +1,19 @@
 import axios from 'axios';
 import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../types';
 
+// Determine API base URL based on environment
+const getBaseURL = () => {
+  // If running on localhost, use local backend
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    return 'http://localhost:8000/api/';
+  }
+  // Otherwise use Render backend
+  return 'https://engaze-resume-builder.onrender.com/api/';
+};
+
 // Create axios instance with base URL
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api/',
+  baseURL: getBaseURL(),
   headers: {
     'Content-Type': 'application/json',
   },
