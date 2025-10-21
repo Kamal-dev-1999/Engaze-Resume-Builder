@@ -3,11 +3,7 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 
 // Determine API base URL based on environment
 const getBaseURL = () => {
-  // If running on localhost, use local backend
-  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-    return 'http://localhost:8000/api/';
-  }
-  // Otherwise use Render backend
+  // Use Render backend for production
   return 'https://engaze-resume-builder.onrender.com/api/';
 };
 
