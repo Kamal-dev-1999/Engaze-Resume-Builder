@@ -172,7 +172,6 @@ const getItemsArray = (content: any): any[] => {
 
 
 const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
-  resumeTitle,
   sections,
 }) => {
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);

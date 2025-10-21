@@ -36,7 +36,6 @@ const getItemsArray = (content: any): any[] => {
 };
 
 const DynamicTemplate: React.FC<DynamicTemplateProps> = ({
-  resumeTitle,
   sections,
 }) => {
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);

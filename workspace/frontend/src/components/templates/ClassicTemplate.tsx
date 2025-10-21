@@ -44,7 +44,6 @@ const getItemsArray = (content: any): any[] => {
 };
 
 const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
-  resumeTitle,
   sections,
 }) => {
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);

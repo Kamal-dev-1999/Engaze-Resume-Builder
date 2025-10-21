@@ -19,7 +19,7 @@ interface ProfessionalTemplateProps {
  * This ensures the component can render data whether it's stored
  * as a single object, a correct array, or in mixed formats.
  */
-const getItemsArray = (content: any): any[] => {
+const _getItemsArray = (content: any): any[] => {
   if (!content) {
     return [];
   }
@@ -142,7 +142,6 @@ const getItemsArray = (content: any): any[] => {
 };
 
 const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
-  resumeTitle,
   sections,
 }) => {
   const sortedSections = [...sections].sort((a, b) => a.order - b.order);

@@ -3,7 +3,7 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 
 // Determine API base URL based on environment
 const getBaseURL = () => {
-  // Use Render backend for production
+  // Prefer Render hosted backend
   return 'https://engaze-resume-builder.onrender.com/api/';
 };
 
@@ -60,7 +60,7 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
         
-        const response = await axios.post('http://localhost:8000/api/auth/token/refresh/', {
+        const response = await axios.post(`${getBaseURL()}auth/token/refresh/`, {
           refresh: refreshToken,
         });
         
@@ -115,7 +115,7 @@ export const authAPI = {
   },
   
   refreshToken: async (refreshToken: string): Promise<AuthResponse> => {
-    const response = await axios.post<AuthResponse>('http://localhost:8000/api/auth/token/refresh/', {
+    const response = await axios.post<AuthResponse>(`${getBaseURL()}auth/token/refresh/`, {
       refresh: refreshToken,
     });
     return response.data;
