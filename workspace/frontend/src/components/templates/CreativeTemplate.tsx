@@ -226,27 +226,27 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
   const rightSections = sortedSections.filter(s => rightTypes.includes(s.type));
 
   return (
-    <div className="w-full bg-white text-gray-800 font-sans p-3 md:p-4">
-      {/* Header - subtle orange band with name + photo */}
-      <div className="max-w-5xl mx-auto bg-white shadow-sm">
-        <div className="bg-orange-500 text-white rounded-t-md px-4 md:px-6 py-4 md:py-6 flex flex-col md:flex-row items-start justify-between gap-2 md:gap-4">
+    <div className="w-full bg-white text-gray-900 font-['Segoe UI'] p-4 md:p-6 lg:p-8">
+      {/* Header - Orange band with name + photo */}
+      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-orange-600 to-orange-500 text-white px-6 md:px-8 py-6 md:py-8 flex flex-col md:flex-row items-start justify-between gap-4 md:gap-6">
           <div className="flex-1 min-w-0">
-            {contact.name && <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-tight">{contact.name}</h1>}
+            {contact.name && <h1 className="text-3xl md:text-4xl font-bold tracking-tight leading-tight">{contact.name}</h1>}
             {contact.tagline || contact.title ? (
-              <p className="mt-1 text-xs md:text-sm opacity-90 line-clamp-2">{contact.tagline || contact.title}</p>
+              <p className="mt-2 text-sm md:text-base font-semibold opacity-95">{contact.tagline || contact.title}</p>
             ) : null}
 
-            <div className="mt-4 flex flex-wrap gap-4 text-sm opacity-95">
-              {contact.phone && <div className="flex items-center gap-2"><Phone size={14} /> <span>{contact.phone}</span></div>}
-              {contact.email && <a className="flex items-center gap-2" href={`mailto:${contact.email}`}><Mail size={14} /> <span>{contact.email}</span></a>}
-              {contact.linkedin && <a className="flex items-center gap-2" href={contact.linkedin} target="_blank" rel="noreferrer"><Linkedin size={14} /> <span>LinkedIn</span></a>}
-              {contact.website && <a className="flex items-center gap-2" href={contact.website} target="_blank" rel="noreferrer"><Globe size={14} /> <span>Portfolio</span></a>}
-              {(contact.address || contact.location) && <div className="flex items-center gap-2"><MapPin size={14} /> <span>{contact.address || contact.location}</span></div>}
+            <div className="mt-4 flex flex-wrap gap-5 text-sm opacity-95 font-medium">
+              {contact.phone && <div className="flex items-center gap-2"><Phone size={16} /> <span>{contact.phone}</span></div>}
+              {contact.email && <a className="flex items-center gap-2 hover:opacity-80 transition" href={`mailto:${contact.email}`}><Mail size={16} /> <span>{contact.email}</span></a>}
+              {contact.linkedin && <a className="flex items-center gap-2 hover:opacity-80 transition" href={contact.linkedin} target="_blank" rel="noreferrer"><Linkedin size={16} /> <span>LinkedIn</span></a>}
+              {contact.website && <a className="flex items-center gap-2 hover:opacity-80 transition" href={contact.website} target="_blank" rel="noreferrer"><Globe size={16} /> <span>Portfolio</span></a>}
+              {(contact.address || contact.location) && <div className="flex items-center gap-2"><MapPin size={16} /> <span>{contact.address || contact.location}</span></div>}
             </div>
           </div>
 
           {/* Photo */}
-          <div className="w-24 h-24 md:w-28 md:h-28 rounded-md bg-white/20 overflow-hidden flex-shrink-0 relative group">
+          <div className="w-28 h-28 md:w-32 md:h-32 rounded-lg bg-white/30 overflow-hidden flex-shrink-0 relative group shadow-md">
             {tempPhoto || contact.photo ? (
               <>
                 {/* eslint-disable-next-line jsx-a11y/img-redundant-alt */}
@@ -254,17 +254,17 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
                 {tempPhoto && (
                   <button
                     onClick={clearPhoto}
-                    className="absolute top-1 right-1 bg-red-500 hover:bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition"
+                    className="absolute top-1 right-1 bg-red-600 hover:bg-red-700 text-white p-1.5 rounded-full opacity-0 group-hover:opacity-100 transition shadow-md"
                     title="Remove photo"
                   >
-                    <X size={14} />
+                    <X size={16} />
                   </button>
                 )}
               </>
             ) : (
-              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-white/30 transition text-white/80 hover:text-white">
-                <Upload size={20} />
-                <span className="text-xs mt-1 text-center px-1 font-medium">Add Photo</span>
+              <label className="w-full h-full flex flex-col items-center justify-center cursor-pointer hover:bg-white/40 transition text-white/90 hover:text-white">
+                <Upload size={22} />
+                <span className="text-xs mt-1.5 text-center px-1 font-semibold">Add Photo</span>
                 <input
                   type="file"
                   accept="image/*"
@@ -277,21 +277,21 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
         </div>
 
         {/* Content area: 2 columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-8 py-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-6 md:px-8 py-8 md:py-10">
           {/* Left / Main column (2/3) */}
-          <div className="md:col-span-2 space-y-6">
+          <div className="md:col-span-2 space-y-5">
             {leftSections.map((section) => {
               switch(section.type) {
                 case 'experience':
                   return (
-                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
-                      <h3 className="text-xl font-semibold text-gray-900">{section.content.title}</h3>
-                      <div className="flex items-center justify-between text-sm text-gray-600 mt-1">
-                        <div>{section.content.company}</div>
-                        <div className="whitespace-nowrap">{section.content.startDate && section.content.endDate ? `${section.content.startDate} – ${section.content.endDate}` : ''}</div>
+                    <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">{section.content.title}</h3>
+                      <div className="flex items-center justify-between text-sm mb-2">
+                        <div className="text-orange-600 font-semibold">{section.content.company}</div>
+                        <div className="whitespace-nowrap text-gray-600 font-medium">{section.content.startDate && section.content.endDate ? `${section.content.startDate} – ${section.content.endDate}` : ''}</div>
                       </div>
                       {section.content.description && (
-                        <ul className="mt-3 text-sm text-gray-700 list-disc list-inside space-y-1">
+                        <ul className="mt-2.5 text-sm text-gray-700 list-disc list-inside space-y-1.5 leading-relaxed">
                           {section.content.description.split('\n').map((line: string, idx: number) => line.trim() ? <li key={idx}>{line.trim()}</li> : null)}
                         </ul>
                       )}
@@ -300,29 +300,29 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
 
                 case 'projects':
                   return (
-                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
-                      <h3 className="text-lg font-semibold text-gray-900">{section.content.title}</h3>
-                      {section.content.date && <div className="text-sm text-gray-600 mt-1">{section.content.date}</div>}
-                      {section.content.description && <p className="mt-2 text-sm text-gray-700">{section.content.description}</p>}
-                      {section.content.link && <a href={section.content.link} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-orange-600 underline">{section.content.linkText || 'View project'}</a>}
+                    <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">{section.content.title}</h3>
+                      {section.content.date && <div className="text-sm text-gray-600 font-medium mb-2">{section.content.date}</div>}
+                      {section.content.description && <p className="mt-2 text-sm text-gray-700 leading-relaxed">{section.content.description}</p>}
+                      {section.content.link && <a href={section.content.link} target="_blank" rel="noreferrer" className="inline-block mt-3 text-sm text-orange-600 hover:text-orange-700 font-semibold underline">{section.content.linkText || 'View project'}</a>}
                     </div>
                   );
 
                 case 'education':
                   return (
-                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
-                      <h3 className="text-lg font-semibold text-gray-900">{section.content.degree}</h3>
-                      <div className="text-sm text-gray-600">{section.content.institution}{section.content.location ? ` — ${section.content.location}` : ''}{section.content.fieldOfStudy ? ` • ${section.content.fieldOfStudy}` : ''}</div>
-                      {section.content.start_date && section.content.end_date && <div className="text-sm text-gray-600 mt-1">{section.content.start_date} – {section.content.end_date}</div>}
-                      {section.content.startDate && section.content.endDate && <div className="text-sm text-gray-600 mt-1">{section.content.startDate} – {section.content.endDate}</div>}
+                    <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">{section.content.degree}</h3>
+                      <div className="text-sm text-orange-600 font-semibold mb-1">{section.content.institution}{section.content.location ? ` — ${section.content.location}` : ''}{section.content.fieldOfStudy ? ` • ${section.content.fieldOfStudy}` : ''}</div>
+                      {section.content.start_date && section.content.end_date && <div className="text-sm text-gray-600 font-medium">{section.content.start_date} – {section.content.end_date}</div>}
+                      {section.content.startDate && section.content.endDate && <div className="text-sm text-gray-600 font-medium">{section.content.startDate} – {section.content.endDate}</div>}
                     </div>
                   );
 
                 case 'custom':
                   return (
-                    <div key={section.id} className="pb-4 border-b" style={getFormattingStyles(section.content?.formatting)}>
-                      <h3 className="text-lg font-semibold text-gray-900">{section.content.title || 'Additional Information'}</h3>
-                      <p className="mt-2 text-sm text-gray-700">{section.content.content || section.content.text}</p>
+                    <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">{section.content.title || 'Additional Information'}</h3>
+                      <p className="text-sm text-gray-700 leading-relaxed">{section.content.content || section.content.text}</p>
                     </div>
                   );
 
@@ -333,34 +333,34 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
           </div>
 
           {/* Right / Sidebar */}
-          <aside className="space-y-6">
+          <aside className="space-y-5">
             {rightSections.map((section) => {
               switch(section.type) {
                 case 'summary':
                   return (
-                    <div key={section.id} className="bg-gray-50 p-4 rounded border" style={getFormattingStyles(section.content?.formatting)}>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-2">Summary</h4>
-                      <p className="text-sm text-gray-700">{section.content.text}</p>
+                    <div key={section.id} className="bg-orange-50 p-5 rounded-lg border-2 border-orange-200" style={getFormattingStyles(section.content?.formatting)}>
+                      <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Summary</h4>
+                      <p className="text-sm text-gray-700 leading-relaxed">{section.content.text}</p>
                     </div>
                   );
 
                 case 'skills':
                   const skillsByCategory = formatSkillsByCategory(section.content.items || []);
                   return (
-                    <div key={section.id} className="bg-gray-50 p-4 rounded border" style={getFormattingStyles(section.content?.formatting)}>
-                      <h4 className="text-sm font-semibold text-gray-900 mb-3">Skills</h4>
-                      <div className="space-y-2">
+                    <div key={section.id} className="bg-orange-50 p-5 rounded-lg border-2 border-orange-200" style={getFormattingStyles(section.content?.formatting)}>
+                      <h4 className="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">Skills</h4>
+                      <div className="space-y-3">
                         {Object.entries(skillsByCategory).length > 0 ? (
                           Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
                             <div key={idx}>
-                              <p className="text-xs font-semibold text-gray-700 mb-1">
+                              <p className="text-xs font-bold text-gray-900 mb-2 uppercase">
                                 {getCategoryDisplayName(categoryId)}
                               </p>
                               <div className="flex flex-wrap gap-2">
                                 {skillList.map((skill: string, sidx: number) => (
                                   <span
                                     key={sidx}
-                                    className="text-xs px-2 py-1 bg-white border rounded text-gray-700"
+                                    className="text-xs px-3 py-1.5 bg-white border-2 border-orange-300 rounded font-medium text-gray-800 hover:bg-orange-100 transition"
                                   >
                                     {skill}
                                   </span>
@@ -370,7 +370,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
                           ))
                         ) : typeof section.content.skills === 'string' ? (
                           section.content.skills?.split(',').map((s: string, i: number) => (
-                            <span key={i} className="text-xs px-2 py-1 bg-white border rounded text-gray-700">{s.trim()}</span>
+                            <span key={i} className="text-xs px-3 py-1.5 bg-white border-2 border-orange-300 rounded font-medium text-gray-800 inline-block">{s.trim()}</span>
                           ))
                         ) : (
                           <span className="text-xs text-gray-500">No skills added</span>
@@ -385,7 +385,7 @@ const CreativeTemplate: React.FC<CreativeTemplateProps> = ({ resumeTitle, sectio
             })}
 
             {/* Small footer note */}
-            <div className="text-xs text-gray-500">Designed with ✨ by Engaze</div>
+            <div className="text-xs text-gray-600 italic pt-2">Designed with ✨ by Engaze</div>
           </aside>
         </div>
       </div>

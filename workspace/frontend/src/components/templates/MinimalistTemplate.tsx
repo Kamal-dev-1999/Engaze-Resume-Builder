@@ -201,26 +201,26 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
   };
 
   return (
-    <div className="w-full bg-white p-4 md:p-6 font-sans">
-      <div className="max-w-full">
+    <div className="w-full bg-white p-4 md:p-6 lg:p-8 font-['Segoe UI'] text-gray-900">
+      <div className="max-w-full space-y-6">
         {sortedSections.map((section) => {
           switch(section.type) {
             case 'contact':
               return (
-                <div key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
                   {section.content.name && (
-                    <h1 className="text-xl font-light tracking-widest text-gray-900">{section.content.name}</h1>
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-1">{section.content.name}</h1>
                   )}
                   {section.content.title && (
-                    <p className="text-xs text-gray-600 tracking-wide mt-0.5">{section.content.title}</p>
+                    <p className="text-sm text-gray-700 tracking-wide font-semibold mb-3">{section.content.title}</p>
                   )}
                   
-                  <div className="flex flex-wrap gap-2 text-xs text-gray-600 mt-2">
-                    {section.content.phone && <span>{section.content.phone}</span>}
+                  <div className="flex flex-wrap gap-3 text-sm text-gray-700">
+                    {section.content.phone && <span className="font-medium">{section.content.phone}</span>}
                     {section.content.email && (
                       <>
                         {section.content.phone && <span>·</span>}
-                        <a href={`mailto:${section.content.email}`} className="hover:text-gray-900">
+                        <a href={`mailto:${section.content.email}`} className="text-blue-700 hover:text-blue-900 font-medium">
                           {section.content.email}
                         </a>
                       </>
@@ -234,7 +234,7 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
                     {section.content.linkedin && (
                       <>
                         <span>·</span>
-                        <a href={section.content.linkedin} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
+                        <a href={section.content.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 font-medium">
                           LinkedIn
                         </a>
                       </>
@@ -242,44 +242,42 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
                     {section.content.website && (
                       <>
                         <span>·</span>
-                        <a href={section.content.website} target="_blank" rel="noopener noreferrer" className="hover:text-gray-900">
+                        <a href={section.content.website} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 font-medium">
                           Portfolio
                         </a>
                       </>
                     )}
                   </div>
-                  <div className="h-px bg-gray-200 mt-3 mb-3"></div>
                 </div>
               );
             case 'summary':
               return (
-                <div key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                  <p className="text-xs leading-tight text-gray-700">{section.content.text}</p>
-                  <div className="h-px bg-gray-200 mt-3 mb-3"></div>
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                  <p className="text-sm leading-relaxed text-gray-700">{section.content.text}</p>
                 </div>
               );
             case 'experience':
               return (
-                <div key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-2">
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     Experience
                   </h2>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div>
-                      <div className="flex justify-between items-start mb-0.5">
-                        <p className="font-semibold text-xs text-gray-900">{section.content.title}</p>
+                      <div className="flex justify-between items-start mb-1">
+                        <p className="font-bold text-sm text-gray-900">{section.content.title}</p>
                         {section.content.startDate && section.content.endDate && (
-                          <span className="text-xs text-gray-600">{section.content.startDate} – {section.content.endDate}</span>
+                          <span className="text-xs text-gray-600 font-medium">{section.content.startDate} – {section.content.endDate}</span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-600 mb-0.5">{section.content.company}</p>
+                      <p className="text-sm text-gray-700 font-semibold mb-2">{section.content.company}</p>
                       {section.content.description && (
-                        <ul className="text-xs text-gray-700 space-y-0.5 mt-1">
+                        <ul className="text-sm text-gray-700 space-y-1.5 mt-2">
                           {section.content.description.split('\n').map((line: string, idx: number) => (
                             line.trim() && (
                               <li key={idx} className="flex items-start">
-                                <span className="mr-2">—</span>
-                                <span>{line.trim()}</span>
+                                <span className="mr-2.5 text-gray-500">—</span>
+                                <span className="leading-relaxed">{line.trim()}</span>
                               </li>
                             )
                           ))}
@@ -287,111 +285,106 @@ const MinimalistTemplate: React.FC<MinimalistTemplateProps> = ({ resumeTitle, se
                       )}
                     </div>
                   </div>
-                  <div className="h-px bg-gray-200 my-3"></div>
                 </div>
               );
             case 'education':
               return (
-                <div key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-2">
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     Education
                   </h2>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     {section.content.items && section.content.items.length > 0 ? (
                       section.content.items.map((edu: any, idx: number) => (
                         <div key={idx}>
-                          <div className="flex justify-between items-start mb-0.5">
-                            <p className="font-semibold text-xs text-gray-900">{edu.degree}</p>
+                          <div className="flex justify-between items-start mb-1">
+                            <p className="font-bold text-sm text-gray-900">{edu.degree}</p>
                             {edu.start_date && edu.end_date && (
-                              <span className="text-xs text-gray-600">{edu.start_date} – {edu.end_date}</span>
+                              <span className="text-xs text-gray-600 font-medium">{edu.start_date} – {edu.end_date}</span>
                             )}
                             {edu.startDate && edu.endDate && (
-                              <span className="text-xs text-gray-600">{edu.startDate} – {edu.endDate}</span>
+                              <span className="text-xs text-gray-600 font-medium">{edu.startDate} – {edu.endDate}</span>
                             )}
                           </div>
-                          <p className="text-xs text-gray-600">{edu.institution}</p>
+                          <p className="text-sm text-gray-700 font-semibold">{edu.institution}</p>
                           {edu.location && (
-                            <p className="text-xs text-gray-600">{edu.location}</p>
+                            <p className="text-sm text-gray-700">{edu.location}</p>
                           )}
                         </div>
                       ))
                     ) : (
                       <div>
-                        <div className="flex justify-between items-start mb-0.5">
-                          <p className="font-semibold text-xs text-gray-900">{section.content.degree}</p>
+                        <div className="flex justify-between items-start mb-1">
+                          <p className="font-bold text-sm text-gray-900">{section.content.degree}</p>
                           {section.content.start_date && section.content.end_date && (
-                            <span className="text-xs text-gray-600">{section.content.start_date} – {section.content.end_date}</span>
+                            <span className="text-xs text-gray-600 font-medium">{section.content.start_date} – {section.content.end_date}</span>
                           )}
                           {section.content.startDate && section.content.endDate && (
-                            <span className="text-xs text-gray-600">{section.content.startDate} – {section.content.endDate}</span>
+                            <span className="text-xs text-gray-600 font-medium">{section.content.startDate} – {section.content.endDate}</span>
                           )}
                         </div>
-                        <p className="text-xs text-gray-600">{section.content.institution}</p>
+                        <p className="text-sm text-gray-700 font-semibold">{section.content.institution}</p>
                         {section.content.location && (
-                          <p className="text-xs text-gray-600">{section.content.location}</p>
+                          <p className="text-sm text-gray-700">{section.content.location}</p>
                         )}
                       </div>
                     )}
                   </div>
-                  <div className="h-px bg-gray-200 my-3"></div>
                 </div>
               );
             case 'skills':
               const skillsByCategory = formatSkillsByCategory(section.content.items || []);
               return (
-                <div key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-2">
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     Skills
                   </h2>
-                  <div className="text-xs text-gray-700 leading-tight space-y-1">
+                  <div className="text-sm text-gray-700 leading-relaxed space-y-2.5">
                     {Object.entries(skillsByCategory).length > 0 ? (
                       Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
                         <p key={idx}>
-                          <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
-                          {skillList.join(", ")}
+                          <span className="font-bold text-gray-900">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                          <span className="text-gray-700">{skillList.join(", ")}</span>
                         </p>
                       ))
                     ) : typeof section.content.skills === 'string' ? (
                       <p>{section.content.skills}</p>
                     ) : (
-                      <p>No skills added</p>
+                      <p className="text-gray-500">No skills added</p>
                     )}
                   </div>
-                  <div className="h-px bg-gray-200 my-6"></div>
                 </div>
               );
             case 'projects':
               return (
-                <div key={section.id} className="mb-3">
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-2">
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     Projects
                   </h2>
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div>
-                      <p className="font-semibold text-xs text-gray-900">
+                      <p className="font-bold text-sm text-gray-900">
                         {section.content.title || section.content.name}
                         {section.content.link && (
-                          <> • <a href={section.content.link} target="_blank" rel="noopener noreferrer" className="text-gray-600 hover:text-gray-900 text-xs underline">{section.content.linkText || 'Link'}</a></>
+                          <> • <a href={section.content.link} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 text-sm underline font-medium">{section.content.linkText || 'Link'}</a></>
                         )}
                       </p>
                       {section.content.description && (
-                        <p className="text-xs text-gray-700 mt-0.5">{section.content.description}</p>
+                        <p className="text-sm text-gray-700 mt-1.5 leading-relaxed">{section.content.description}</p>
                       )}
                     </div>
                   </div>
-                  <div className="h-px bg-gray-200 my-3"></div>
                 </div>
               );
             case 'custom':
               return (
-                <div key={section.id} className="mb-3">
-                  <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-900 mb-2">
+                <div key={section.id} className="pb-5 border-b-2 border-gray-300">
+                  <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 mb-4 pb-2 border-b border-gray-200">
                     {section.content.title || 'Additional Information'}
                   </h2>
-                  <p className="text-xs text-gray-700 leading-tight">
+                  <p className="text-sm text-gray-700 leading-relaxed">
                     {section.content.content || section.content.text}
                   </p>
-                  <div className="h-px bg-gray-200 my-3"></div>
                 </div>
               );
             default:

@@ -109,46 +109,46 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
     <div className="w-full bg-white text-gray-900 p-4 md:p-6 lg:p-8 font-['Georgia'] leading-relaxed">
       <div className="max-w-[794px] mx-auto">
         {/* Header */}
-        <header className="text-center mb-4 pb-4 border-b-4 border-gray-800">
+        <header className="text-center mb-6 pb-6 border-b-4 border-gray-800">
           {contactSection.name && (
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-0.5 tracking-tight">
+            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-1 tracking-tight">
               {contactSection.name}
             </h1>
           )}
           {contactSection.title && (
-            <p className="text-sm text-gray-600 font-semibold mb-2">{contactSection.title}</p>
+            <p className="text-sm text-gray-700 font-semibold mb-4 uppercase tracking-wider">{contactSection.title}</p>
           )}
           
           {/* Contact Info */}
-          <div className="text-xs text-gray-700 space-y-0.5">
-            <div className="flex flex-wrap justify-center gap-3 text-[11px]">
-              {contactSection.phone && <span>{contactSection.phone}</span>}
+          <div className="text-xs text-gray-700 space-y-1">
+            <div className="flex flex-wrap justify-center gap-4 text-sm">
+              {contactSection.phone && <span className="font-medium">{contactSection.phone}</span>}
               {contactSection.email && (
                 <>
-                  {contactSection.phone && <span>|</span>}
-                  <a href={`mailto:${contactSection.email}`} className="text-blue-600 hover:underline">
+                  {contactSection.phone && <span className="text-gray-600">|</span>}
+                  <a href={`mailto:${contactSection.email}`} className="text-blue-700 hover:text-blue-900 hover:underline font-medium">
                     {contactSection.email}
                   </a>
                 </>
               )}
               {(contactSection.address || contactSection.location) && (
                 <>
-                  {(contactSection.phone || contactSection.email) && <span>|</span>}
-                  <span>{contactSection.address || contactSection.location}</span>
+                  {(contactSection.phone || contactSection.email) && <span className="text-gray-600">|</span>}
+                  <span className="font-medium">{contactSection.address || contactSection.location}</span>
                 </>
               )}
             </div>
             {(contactSection.website || contactSection.linkedin) && (
-              <div className="flex flex-wrap justify-center gap-3 text-[11px]">
+              <div className="flex flex-wrap justify-center gap-4 text-sm">
                 {contactSection.website && (
-                  <a href={contactSection.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                  <a href={contactSection.website} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 hover:underline font-medium">
                     {contactSection.website}
                   </a>
                 )}
                 {contactSection.linkedin && (
                   <>
-                    {contactSection.website && <span>|</span>}
-                    <a href={contactSection.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {contactSection.website && <span className="text-gray-600">|</span>}
+                    <a href={contactSection.linkedin} target="_blank" rel="noopener noreferrer" className="text-blue-700 hover:text-blue-900 hover:underline font-medium">
                       LinkedIn
                     </a>
                   </>
@@ -159,7 +159,7 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
         </header>
 
         {/* Main Content */}
-        <main className="space-y-3">
+        <main className="space-y-5">
           {/* Render sections in sorted order using map */}
           {sortedSections.map((section) => {
             // Normalize data for sections that can have multiple items
@@ -168,36 +168,36 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
             switch (section.type) {
               case "summary":
                 return (
-                  <section key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-bold uppercase text-gray-800 tracking-wider mb-1 pb-0.5 border-b-2 border-gray-800">
+                  <section key={section.id} className="mb-5 pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-900 tracking-wider mb-3 pb-2 border-b border-gray-200">
                       Professional Summary
                     </h2>
-                    <p className="text-[12px] text-gray-800 leading-tight italic">
+                    <p className="text-sm text-gray-700 leading-relaxed">
                       {section.content?.text || "Your professional summary"}
                     </p>
                   </section>
                 );
               case "experience":
                 return (
-                  <section key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-bold uppercase text-gray-800 tracking-wider mb-2 pb-0.5 border-b-2 border-gray-800">
+                  <section key={section.id} className="mb-5 pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-900 tracking-wider mb-3 pb-2 border-b border-gray-200">
                       Professional Experience
                     </h2>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {items.length > 0 ? (
                         items.map((exp: any, idx: number) => (
                           <div key={idx}>
                             <div className="flex justify-between items-baseline gap-4 mb-0.5">
-                              <h3 className="font-bold text-gray-900">{exp.title || exp.jobTitle}</h3>
+                              <h3 className="font-bold text-gray-900 text-sm">{exp.title || exp.jobTitle}</h3>
                               {exp.start_date && exp.end_date && (
-                                <span className="text-gray-600 text-xs whitespace-nowrap">
+                                <span className="text-gray-600 text-xs whitespace-nowrap font-medium">
                                   {exp.start_date} – {exp.end_date}
                                 </span>
                               )}
                             </div>
-                            <p className="text-gray-700 font-semibold text-[11px] mb-0.5">{exp.company}</p>
-                            {exp.location && <p className="text-gray-600 text-xs mb-0.5">{exp.location}</p>}
-                            <p className="text-[12px] text-gray-800 leading-tight">{exp.description}</p>
+                            <p className="text-gray-700 font-semibold text-sm mb-0.5">{exp.company}</p>
+                            {exp.location && <p className="text-gray-600 text-xs mb-1">{exp.location}</p>}
+                            <p className="text-sm text-gray-700 leading-relaxed">{exp.description}</p>
                           </div>
                         ))
                       ) : (
@@ -208,23 +208,23 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
                 );
               case "education":
                 return (
-                  <section key={section.id} className="mb-3" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-bold uppercase text-gray-800 tracking-wider mb-2 pb-0.5 border-b-2 border-gray-800">
+                  <section key={section.id} className="mb-5 pb-5 border-b-2 border-gray-300" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-900 tracking-wider mb-3 pb-2 border-b border-gray-200">
                       Education
                     </h2>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {items.length > 0 ? (
                         items.map((edu: any, idx: number) => (
                           <div key={idx}>
-                            <div className="flex justify-between items-baseline gap-4">
-                              <h3 className="font-bold text-gray-900">{edu.degree}</h3>
+                            <div className="flex justify-between items-baseline gap-4 mb-0.5">
+                              <h3 className="font-bold text-gray-900 text-sm">{edu.degree}</h3>
                               {edu.start_date && edu.end_date && (
-                                <span className="text-gray-600 text-xs whitespace-nowrap">
+                                <span className="text-gray-600 text-xs whitespace-nowrap font-medium">
                                   {edu.start_date} – {edu.end_date}
                                 </span>
                               )}
                             </div>
-                            <p className="text-gray-700 font-semibold text-[11px]">{edu.institution}</p>
+                            <p className="text-gray-700 font-semibold text-sm">{edu.institution}</p>
                             {edu.location && (
                               <p className="text-gray-600 text-xs">{edu.location}</p>
                             )}
@@ -242,19 +242,19 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
                 // We just need to check if 'content.items' is a valid array.
                 const skillItems = Array.isArray(section.content?.items) ? section.content.items : [];
                 return (
-                  <section key={section.id} className="mb-3">
-                    <h2 className="text-xs font-bold uppercase text-gray-800 tracking-wider mb-1 pb-0.5 border-b-2 border-gray-800">
+                  <section key={section.id} className="mb-5 pb-5 border-b-2 border-gray-300">
+                    <h2 className="text-sm font-bold uppercase text-gray-900 tracking-wider mb-3 pb-2 border-b border-gray-200">
                       Core Competencies
                     </h2>
                     {skillItems.length > 0 ? (
-                      <p className="text-[12px] text-gray-800 leading-tight space-y-1">
+                      <div className="text-sm text-gray-700 leading-relaxed space-y-2">
                         {Object.entries(formatSkillsByCategory(skillItems)).map(([categoryId, skillList], idx) => (
-                          <span key={idx} className="block">
-                            <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
-                            {skillList.join(", ")}
-                          </span>
+                          <p key={idx}>
+                            <span className="font-bold text-gray-900">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                            <span className="text-gray-700">{skillList.join(", ")}</span>
+                          </p>
                         ))}
-                      </p>
+                      </div>
                     ) : (
                       <p className="text-gray-500 text-xs italic">Add your skills</p>
                     )}
@@ -263,12 +263,12 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
               case "languages":
                 const langItems = Array.isArray(section.content?.items) ? section.content.items : [];
                 return (
-                  <section key={section.id} className="mb-3">
-                    <h2 className="text-xs font-bold uppercase text-gray-800 tracking-wider mb-1 pb-0.5 border-b-2 border-gray-800">
+                  <section key={section.id} className="mb-5 pb-5 border-b-2 border-gray-300">
+                    <h2 className="text-sm font-bold uppercase text-gray-900 tracking-wider mb-3 pb-2 border-b border-gray-200">
                       Languages
                     </h2>
                     {langItems.length > 0 ? (
-                      <p className="text-[12px] text-gray-800">
+                      <p className="text-sm text-gray-700">
                         {langItems.join(", ")}
                       </p>
                     ) : (
