@@ -108,7 +108,7 @@ const AddSection: React.FC<AddSectionProps> = ({ onAdd }) => {
       </button>
       
       {isOpen && (
-        <div className="absolute z-10 mt-2 w-full bg-white rounded-lg shadow-xl max-h-72 overflow-y-auto flex flex-col border border-gray-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="absolute z-50 top-full left-0 mt-2 w-full bg-white rounded-lg shadow-2xl max-h-72 overflow-y-auto flex flex-col border border-gray-200" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {sectionTypes.map((type) => (
             <button
               key={type.id}

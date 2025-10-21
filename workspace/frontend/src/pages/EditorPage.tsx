@@ -555,9 +555,10 @@ const EditorPage: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {/* Editor Controls Panel */}
                     <div className="col-span-1">
-                      <div className="bg-white shadow rounded-lg p-6 md:sticky md:top-6 md:max-h-[calc(100vh-40px)] md:overflow-y-auto">
+                      <div className="bg-white shadow rounded-lg p-6">
                         <h3 className="text-lg font-medium text-gray-900 mb-4">Resume Sections</h3>
                         
+                        <div className="md:max-h-[calc(100vh-280px)] md:overflow-y-auto">
                         {editingSection ? (
                           <SectionEditor 
                             section={editingSection} 
@@ -587,12 +588,13 @@ const EditorPage: React.FC = () => {
                                 <p className="text-sm mt-1">Add a section to get started</p>
                               </div>
                             )}
-                            
-                            <div className="mt-4">
-                              <AddSection onAdd={handleAddSection} />
-                            </div>
                           </>
                         )}
+                        </div>
+                        
+                        <div className="mt-4 pt-4 border-t">
+                          <AddSection onAdd={handleAddSection} />
+                        </div>
                       </div>
                     </div>
                     

@@ -234,18 +234,18 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   };
 
   return (
-    <div className="w-full bg-white text-gray-900 p-4 md:p-6 font-['Inter'] leading-relaxed tracking-tight">
-      <div className="max-w-[794px] mx-auto text-[12px]">
+    <div className="w-full bg-white text-gray-900 p-4 md:p-6 lg:p-8 font-['Inter'] leading-relaxed">
+      <div className="max-w-[794px] mx-auto">
         {/* Header - Contact Section */}
-        <header className="border-b-2 border-gray-400 pb-3 mb-4 text-center">
+        <header className="border-b-2 border-gray-400 pb-4 mb-4 text-center">
           {contactSection.name && (
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight mb-2">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight mb-3">
               {contactSection.name}
             </h1>
           )}
-          <div className="text-xs text-gray-700 space-y-0.5">
+          <div className="text-xs text-gray-700 space-y-2">
             {/* Contact Details Row 1 */}
-            <div className="flex flex-wrap justify-center gap-2 text-[11px]">
+            <div className="flex flex-wrap justify-center gap-3 text-[11px]">
               {contactSection.phone && (
                 <span className="inline-block">{contactSection.phone}</span>
               )}
@@ -298,7 +298,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
         </header>
 
         {/* Sections */}
-        <main className="space-y-2">
+        <main className="space-y-4">
           {sortedSections.map((section) => {
             // Normalize data for sections that can have multiple items
             const items = getItemsArray(section.content);
@@ -329,11 +329,11 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
             switch (section.type) {
               case "summary":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Professional Summary
                     </h2>
-                    <p className="text-[12px] text-gray-800 leading-tight">
+                    <p className="text-[12px] text-gray-800 leading-relaxed">
                       {section.content?.text || "Your professional summary"}
                     </p>
                   </section>
@@ -341,19 +341,19 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "education":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Education
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       {items.length > 0 ? (
                         items.map((edu: any, idx: number) => (
                           <div key={idx} className="flex justify-between items-start gap-4">
                             <div className="flex-1">
-                              <p className="font-semibold text-[12px]">
+                              <p className="font-semibold text-[12px] text-gray-900">
                                 {edu.degree}
                               </p>
-                              <p className="text-xs text-gray-700 leading-tight">
+                              <p className="text-[12px] text-gray-700 leading-snug mt-1">
                                 {edu.institution}
                                 {edu.location && (
                                   <> — {edu.location}</>
@@ -363,18 +363,18 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                                 )}
                               </p>
                             </div>
-                            <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0 leading-tight">
+                            <div className="text-[11px] text-gray-600 text-right whitespace-nowrap flex-shrink-0 leading-snug">
                               {(edu.start_date && edu.end_date) && (
-                                <p>
+                                <p className="font-medium">
                                   {edu.start_date} – {edu.end_date}
                                 </p>
                               )}
                               {(edu.startDate && edu.endDate) && (
-                                <p>
+                                <p className="font-medium">
                                   {edu.startDate} – {edu.endDate}
                                 </p>
                               )}
-                              {edu.gpa && <p>GPA: {edu.gpa}</p>}
+                              {edu.gpa && <p className="mt-0.5">GPA: {edu.gpa}</p>}
                             </div>
                           </div>
                         ))
@@ -388,16 +388,16 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
               case "skills":
                 const skillsByCategory = formatSkillsByCategory(skillItems);
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Skills
                     </h2>
-                    <div className="text-[12px] text-gray-800 leading-tight space-y-1">
+                    <div className="text-[12px] text-gray-800 leading-relaxed space-y-2">
                       {skillItems.length > 0 ? (
                         Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
                           <p key={idx}>
-                            <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
-                            {skillList.join(", ")}
+                            <span className="font-semibold text-gray-900">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                            <span className="text-gray-700">{skillList.join(", ")}</span>
                           </p>
                         ))
                       ) : (
@@ -409,24 +409,24 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "experience":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Work Experience
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       {items.length > 0 ? (
                         items.map((exp: any, idx: number) => (
                           <div key={idx}>
-                            <div className="flex justify-between items-start gap-4">
+                            <div className="flex justify-between items-start gap-4 mb-2">
                               <div className="flex-1">
-                                <p className="font-semibold text-[12px]">
+                                <p className="font-semibold text-[12px] text-gray-900">
                                   {exp.jobTitle || exp.title}
                                 </p>
-                                <p className="text-xs text-gray-700 leading-tight">
+                                <p className="text-[12px] text-gray-700 leading-snug">
                                   {exp.company}
                                 </p>
                               </div>
-                              <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0">
+                              <div className="text-[11px] text-gray-600 text-right whitespace-nowrap flex-shrink-0 font-medium">
                                 {(exp.startDate && exp.endDate) && (
                                   <p>
                                     {exp.startDate} – {exp.endDate}
@@ -440,7 +440,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                               </div>
                             </div>
                             {exp.description && (
-                              <p className="text-[12px] text-gray-800 leading-tight pl-2">
+                              <p className="text-[12px] text-gray-800 leading-relaxed pl-2 border-l-2 border-gray-300">
                                 {exp.description}
                               </p>
                             )}
@@ -455,17 +455,17 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "projects":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Projects
                     </h2>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                       {items.length > 0 ? (
                         items.map((proj: any, idx: number) => (
-                          <div key={idx} className="mb-2">
-                            <div className="flex justify-between items-baseline gap-2">
+                          <div key={idx}>
+                            <div className="flex justify-between items-baseline gap-2 mb-2">
                               <div className="flex items-baseline gap-2">
-                                <p className="font-semibold text-[12px]">
+                                <p className="font-semibold text-[12px] text-gray-900">
                                   {proj.name || proj.title}
                                 </p>
                                 {(proj.link || proj.url) && (
@@ -473,15 +473,15 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                                     href={proj.link || proj.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-blue-600 hover:underline text-[11px] whitespace-nowrap"
+                                    className="text-blue-600 hover:text-blue-800 underline text-[11px] whitespace-nowrap"
                                   >
                                     Link
                                   </a>
                                 )}
                               </div>
-                              <div className="flex gap-3 text-xs text-gray-600 whitespace-nowrap">
+                              <div className="flex gap-3 text-[11px] text-gray-600 whitespace-nowrap flex-shrink-0">
                                 {(proj.start_date || proj.end_date) && (
-                                  <p className="leading-tight">
+                                  <p className="font-medium leading-snug">
                                     {proj.start_date && proj.end_date && `${proj.start_date} – ${proj.end_date}`}
                                     {proj.start_date && !proj.end_date && `${proj.start_date}`}
                                     {!proj.start_date && proj.end_date && `${proj.end_date}`}
@@ -489,14 +489,14 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                                 )}
                               </div>
                             </div>
-                            <div className="pl-2">
+                            <div className="pl-2 border-l-2 border-gray-300">
                               {proj.description && (
-                                <p className="text-[12px] text-gray-700 leading-snug mt-1">
+                                <p className="text-[12px] text-gray-800 leading-relaxed mb-1">
                                   {proj.description}
                                 </p>
                               )}
                               {proj.technologies && (
-                                <p className="text-xs text-gray-600 leading-tight mt-0.5">
+                                <p className="text-[11px] text-gray-700">
                                   <span className="font-semibold">Tech:</span> {proj.technologies}
                                 </p>
                               )}
@@ -512,11 +512,11 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "languages":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       Languages
                     </h2>
-                    <div className="text-[12px] text-gray-800 leading-tight">
+                    <div className="text-[12px] text-gray-800 leading-relaxed">
                       {items.length > 0 ? (
                         <p>{items.join(", ")}</p>
                       ) : (
@@ -528,11 +528,11 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "custom":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-700 tracking-wider mb-3 pb-2 border-b-2 border-gray-300">
                       {section.content?.title || 'Additional Information'}
                     </h2>
-                    <div className="text-[12px] text-gray-800 leading-tight">
+                    <div className="text-[12px] text-gray-800 leading-relaxed">
                       {section.content?.content || section.content?.text ? (
                          <p>{section.content.content || section.content.text}</p>
                       ) : (

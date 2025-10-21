@@ -106,10 +106,10 @@ const ClassicTemplate: React.FC<ClassicTemplateProps> = ({
   };
 
   return (
-    <div className="w-full bg-white text-gray-900 p-4 md:p-6 font-['Georgia'] leading-relaxed">
-      <div className="max-w-[794px] mx-auto text-[12px]">
+    <div className="w-full bg-white text-gray-900 p-4 md:p-6 lg:p-8 font-['Georgia'] leading-relaxed">
+      <div className="max-w-[794px] mx-auto">
         {/* Header */}
-        <header className="text-center mb-4 pb-3 border-b-4 border-gray-800">
+        <header className="text-center mb-4 pb-4 border-b-4 border-gray-800">
           {contactSection.name && (
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-0.5 tracking-tight">
               {contactSection.name}

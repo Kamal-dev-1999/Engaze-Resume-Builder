@@ -204,10 +204,10 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
   };
 
   return (
-    <div className="w-full bg-white text-gray-900 p-4 md:p-6 font-['Inter'] leading-relaxed tracking-tight">
+    <div className="w-full bg-white text-gray-900 p-4 md:p-6 lg:p-8 font-['Inter'] leading-relaxed tracking-tight">
       <div className="max-w-[794px] mx-auto text-[12px]">
         {/* Header - Contact Section */}
-        <header className="border-b-2 border-gray-400 pb-3 mb-4 text-center">
+        <header className="border-b-2 border-gray-300 pb-4 mb-4 text-center">
           {contactSection.name && (
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 uppercase tracking-tight mb-2">
               {contactSection.name}
@@ -268,16 +268,16 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
         </header>
 
         {/* Sections */}
-        <main className="space-y-2">
+        <main className="space-y-4">
           {sortedSections.map((section) => {
             switch (section.type) {
               case "summary":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       Professional Summary
                     </h2>
-                    <p className="text-[12px] text-gray-800 leading-tight">
+                    <p className="text-[12px] text-gray-700 leading-relaxed">
                       {section.content.text}
                     </p>
                   </section>
@@ -285,17 +285,17 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "education":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       Education
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1">
-                          <p className="font-semibold text-[12px]">
+                          <p className="font-bold text-[12px] text-gray-900">
                             {section.content.degree}
                           </p>
-                          <p className="text-xs text-gray-700 leading-tight">
+                          <p className="text-xs text-gray-700 leading-relaxed">
                             {section.content.institution}
                             {section.content.location && (
                               <> — {section.content.location}</>
@@ -305,7 +305,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                             )}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0 leading-tight">
+                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0 leading-relaxed">
                           {section.content.start_date && section.content.end_date && (
                             <p>
                               {section.content.start_date} – {section.content.end_date}
@@ -326,15 +326,15 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
               case "skills":
                 const skillsByCategory = formatSkillsByCategory(section.content.items || []);
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       Skills
                     </h2>
-                    <div className="text-[12px] text-gray-800 leading-tight space-y-1">
+                    <div className="text-[12px] text-gray-700 leading-relaxed space-y-2">
                       {Object.entries(skillsByCategory).length > 0 ? (
                         Object.entries(skillsByCategory).map(([categoryId, skillList], idx) => (
                           <p key={idx}>
-                            <span className="font-semibold">{getCategoryDisplayName(categoryId)}:</span>{" "}
+                            <span className="font-bold text-gray-900">{getCategoryDisplayName(categoryId)}:</span>{" "}
                             {skillList.join(", ")}
                           </p>
                         ))
@@ -349,21 +349,21 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "experience":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       Work Experience
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1">
-                          <p className="font-semibold text-[12px]">
+                          <p className="font-bold text-[12px] text-gray-900">
                             {section.content.jobTitle}
                           </p>
-                          <p className="text-xs text-gray-700 leading-tight">
+                          <p className="text-xs text-gray-700 leading-relaxed">
                             {section.content.company}
                           </p>
                         </div>
-                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0">
+                        <div className="text-xs text-gray-700 text-right whitespace-nowrap flex-shrink-0 leading-relaxed">
                           {section.content.startDate && section.content.endDate && (
                             <p>
                               {section.content.startDate} – {section.content.endDate}
@@ -372,7 +372,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                         </div>
                       </div>
                       {section.content.description && (
-                        <p className="text-[12px] text-gray-800 leading-tight pl-2">
+                        <p className="text-[12px] text-gray-700 leading-relaxed border-l-2 border-gray-300 pl-3">
                           {section.content.description}
                         </p>
                       )}
@@ -382,14 +382,14 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "projects":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       Projects
                     </h2>
-                    <div className="space-y-1">
+                    <div className="space-y-3">
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex-1">
-                          <p className="font-semibold text-[12px]">
+                          <p className="font-bold text-[12px] text-gray-900">
                             {section.content.name}
                             {section.content.link && (
                               <a
@@ -405,7 +405,7 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
                         </div>
                       </div>
                       {section.content.description && (
-                        <p className="text-[12px] text-gray-800 leading-tight pl-2">
+                        <p className="text-[12px] text-gray-700 leading-relaxed border-l-2 border-gray-300 pl-3">
                           {section.content.description}
                         </p>
                       )}
@@ -415,11 +415,11 @@ const ProfessionalTemplate: React.FC<ProfessionalTemplateProps> = ({
 
               case "custom":
                 return (
-                  <section key={section.id} className="mb-2" style={getFormattingStyles(section.content?.formatting)}>
-                    <h2 className="text-xs font-semibold uppercase text-gray-600 tracking-wider mb-1 border-b border-gray-200">
+                  <section key={section.id} className="mb-4" style={getFormattingStyles(section.content?.formatting)}>
+                    <h2 className="text-sm font-bold uppercase text-gray-800 tracking-wider mb-2 pb-2 border-b-2 border-gray-300">
                       {section.content.title || 'Additional Information'}
                     </h2>
-                    <div className="text-[12px] text-gray-800 leading-tight">
+                    <div className="text-[12px] text-gray-700 leading-relaxed">
                       <p>{section.content.content || section.content.text}</p>
                     </div>
                   </section>
