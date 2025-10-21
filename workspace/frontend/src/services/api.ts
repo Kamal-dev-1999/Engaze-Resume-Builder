@@ -3,8 +3,8 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 
 // Determine API base URL based on environment
 const getBaseURL = () => {
-  // Prefer Render hosted backend
-  return 'https://engaze-resume-builder.onrender.com/api/';
+  // Use VPS hosted backend
+  return 'http://31.97.111.127/backend/api/';
 };
 
 // Create axios instance with base URL
