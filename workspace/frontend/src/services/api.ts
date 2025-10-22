@@ -4,8 +4,9 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 // Determine API base URL based on environment
 const getBaseURL = () => {
   // Get API base URL from environment or use Render backend
-  const apiUrl = import.meta.env.VITE_API_BASE_URL || 
-                 'https://engaze-resume-builder.onrender.com/api/';
+  const apiUrl = import.meta.env.VITE_API_BASE_URL 
+  || 'http://31.97.111.127:8000/api/'
+                //  'https://engaze-resume-builder.onrender.com/api/';
   
   // Ensure it ends with /api/ for proper routing
   return apiUrl.endsWith('/api/') ? apiUrl : `${apiUrl}/api/`;
