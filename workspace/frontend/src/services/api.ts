@@ -5,7 +5,7 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 const getBaseURL = () => {
   // Get API base URL from environment or use Render backend
   const apiUrl = import.meta.env.VITE_API_BASE_URL 
-  || 'https://31.97.111.127/backend/api/'
+  || 'https://api.kamal.software/api/'
                 //  'https://engaze-resume-builder.onrender.com/api/';
   
   // Ensure it ends with /api/ for proper routing
