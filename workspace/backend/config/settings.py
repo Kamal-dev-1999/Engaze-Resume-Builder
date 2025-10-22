@@ -163,18 +163,49 @@ REST_FRAMEWORK = {
 }
 
 # CORS settings
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+# Get CORS origins from environment variable, filter out empty strings
+cors_origins = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
+CORS_ALLOWED_ORIGINS = [origin.strip() for origin in cors_origins if origin.strip()]
 
+# Add localhost origins in development
 if os.environ.get('CORS_ALLOW_LOCALHOST', 'False') == 'True':
     CORS_ALLOWED_ORIGINS.extend([
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:5173",  # Vite default port
         "http://127.0.0.1:5173",  # Vite default port
+        "http://localhost:8000",  # Django dev server
+        "http://127.0.0.1:8000",  # Django dev server
     ])
 
-# Allow credentials (cookies, authorization headers)
-CORS_ALLOW_CREDENTIALS = True
+# Use regex to allow render.com subdomains and other patterns
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.render\.com$",  # Allow any render.com subdomain
+    r"^https://engaze-resume-builder.*\.onrender\.com$",  # Specific to Engaze
+]
+
+# Allow credentials for cross-origin requests
+# NOTE: When using CORS_ALLOW_CREDENTIALS=True, origins cannot use wildcard (*)
+# Explicit origins must be listed above
+CORS_ALLOW_CREDENTIALS = False  # False for JWT (not needed, tokens in header not cookies)
+
+# Allow custom headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+
+CORS_EXPOSE_HEADERS = [
+    'Content-Type',
+    'X-CSRFToken',
+]
 
 # Simple JWT settings
 from datetime import timedelta
@@ -186,6 +217,17 @@ SIMPLE_JWT = {
 
 # Custom User Model
 AUTH_USER_MODEL = 'api.User'
+
+# CSRF settings for API endpoints
+# API endpoints use JWT in Authorization header, not session cookies
+# Therefore CSRF tokens are not needed for API requests
+CSRF_TRUSTED_ORIGINS = [
+    'https://engaze-resume-builder-1.onrender.com',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+]
 
 # Production settings
 if not DEBUG:

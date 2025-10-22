@@ -3,8 +3,12 @@ import type { LoginCredentials, RegisterCredentials, AuthResponse } from '../typ
 
 // Determine API base URL based on environment
 const getBaseURL = () => {
-  // Use VPS hosted backend with HTTPS
-  return 'https://31.97.111.127/backend/api/';
+  // Get API base URL from environment or use Render backend
+  const apiUrl = import.meta.env.VITE_API_BASE_URL || 
+                 'https://engaze-resume-builder.onrender.com/api/';
+  
+  // Ensure it ends with /api/ for proper routing
+  return apiUrl.endsWith('/api/') ? apiUrl : `${apiUrl}/api/`;
 };
 
 // Create axios instance with base URL
@@ -13,7 +17,8 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // Include credentials for CORS requests
+  // withCredentials not needed for JWT auth (tokens sent in Authorization header)
+  // Keeping it off to avoid CORS issues across different devices
 });
 
 // Request interceptor for adding token to requests
@@ -60,7 +65,8 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
         
-        const response = await axios.post(`${getBaseURL()}auth/token/refresh/`, {
+        // Use the configured api client for token refresh (respects CORS settings)
+        const response = await api.post('auth/token/refresh/', {
           refresh: refreshToken,
         });
         
